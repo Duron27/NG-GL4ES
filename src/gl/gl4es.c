@@ -9,6 +9,7 @@
 #include <errno.h>
 #include <string.h>
 #include <stdarg.h>
+#include <ctype.h>
 
 #include "../config.h"
 #include "../glx/hardext.h"

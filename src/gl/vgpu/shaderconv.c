@@ -14,6 +14,9 @@
 int NO_OPERATOR_VALUE = 9999;
 
 #include <GL/gl.h>
+#include <GL/glext.h>
+#include <GLES/gl2.h>
+#include <GLES/gl3.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>

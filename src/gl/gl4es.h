@@ -32,6 +32,8 @@ packed_call_t* glCopyPackedCall(const packed_call_t *packed);
 #define ERROR_IN_BEGIN if(glstate->list.begin) {errorShim(GL_INVALID_OPERATION); return;}
 
 void write_log(const char* format, ...);
+void clear_log();
+void trim(char* str);
 
 const GLubyte *gl4es_glGetString(GLenum name);
 void gl4es_glGetIntegerv(GLenum pname, GLint *params);
@@ -158,6 +160,13 @@ GLenum glGetError();
 
 // custom functions
 void glPushCall(void *call);
+
+void FASTMATH rlVertexP4uiv(renderlist_t* list, GLuint* p);
+void FASTMATH rlVertexP3uiv(renderlist_t* list, GLuint* p);
+void FASTMATH rlVertexP2uiv(renderlist_t* list, GLuint* p);
+void FASTMATH rlVertexP4ui(renderlist_t* list, GLuint p1, GLuint p2, GLuint p3, GLuint p4);
+void FASTMATH rlVertexP3ui(renderlist_t* list, GLuint p1, GLuint p2, GLuint p3);
+void FASTMATH rlVertexP2ui(renderlist_t* list, GLuint p1, GLuint p2);
 
 #endif // _GL4ES_GL4ES_H_
 #ifdef __cplusplus

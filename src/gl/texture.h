@@ -260,6 +260,8 @@ void realize_bound(int TMU, GLenum target);
 void realize_textures(int drawing);
 void realize_active();
 
+void realize_texture_2(GLenum target, int wantedTMU, gltexture_t* tex, glsampler_t* sampler);
+
 #endif // _GL4ES_TEXTURE_H_
 #ifdef __cplusplus
 }
