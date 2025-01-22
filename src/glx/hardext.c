@@ -343,6 +343,14 @@ void GetHardwareExtensions(int notest)
         S("GL_EXT_color_buffer_half_float ", halffloatfbo, 1);
     }
 
+    S("GL_EXT_texture_compression_s3tc ", dxtCompression, 1);
+    S("GL_EXT_texture_compression_dxt1 ", dxt1, 1);
+    S("GL_EXT_texture_compression_dxt3 ", dxt3, 1);
+    S("GL_EXT_texture_compression_dxt5 ", dxt5, 1);
+    S("GL_ANGLE_texture_compression_dxt1 ", dxt1angle, 1);
+    S("GL_ANGLE_texture_compression_dxt3 ", dxt3angle, 1);
+    S("GL_ANGLE_texture_compression_dxt5 ", dxt5angle, 1);
+
     if (hardext.esversion>1) {
         if(!globals4es.nohighp) {
             S("GL_OES_fragment_precision_high ", highp, 1);

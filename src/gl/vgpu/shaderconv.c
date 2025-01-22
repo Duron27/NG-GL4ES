@@ -22,13 +22,13 @@ int NO_OPERATOR_VALUE = 9999;
 #include <stdlib.h>
 #include <ctype.h>
 
-// è¾…åŠ©å‡½æ•°ï¼šè§£æå¹¶æå–æµ®ç‚¹æ•°æ•°ç»„ï¼ˆç”¨äº mat2, mat3, mat4, vec2, vec3, vec4 ç±»å‹çš„å¤„ç†ï¼‰
+// ¸¨Öúº¯Êı£º½âÎö²¢ÌáÈ¡¸¡µãÊıÊı×é£¨ÓÃÓÚ mat2, mat3, mat4, vec2, vec3, vec4 ÀàĞÍµÄ´¦Àí£©
 int parse_floats_from_string(const char* str, GLfloat* outValues, int maxCount) {
     int count = 0;
     const char* cursor = str;
 
     while (*cursor && count < maxCount) {
-        // æŸ¥æ‰¾æ•°å­—
+        // ²éÕÒÊı×Ö
         while (*cursor && !isdigit((unsigned char)*cursor) && *cursor != '-') cursor++;
 
         if (*cursor) {
@@ -38,7 +38,7 @@ int parse_floats_from_string(const char* str, GLfloat* outValues, int maxCount) 
     return count;
 }
 
-// è¾…åŠ©å‡½æ•°ï¼šè§£æ bool ç±»å‹
+// ¸¨Öúº¯Êı£º½âÎö bool ÀàĞÍ
 int parse_bool_from_string(const char* str) {
     if (strcmp(str, "true") == 0) {
         return GL_TRUE;
@@ -46,7 +46,7 @@ int parse_bool_from_string(const char* str) {
     if (strcmp(str, "false") == 0) {
         return GL_FALSE;
     }
-    return -1;  // æ— æ•ˆçš„å¸ƒå°”å€¼
+    return -1;  // ÎŞĞ§µÄ²¼¶ûÖµ
 }
 
 bool has_valid_data(char arr[256]) {
@@ -117,7 +117,7 @@ void set_uniforms_default_value(GLuint program, uniforms_declarations uniformVec
             }
         }
         else if (strstr(uniform->initial_value, "vec3") != NULL) {
-            // å¤„ç† vec3 ç±»å‹
+            // ´¦Àí vec3 ÀàĞÍ
             GLfloat vecValues[3];
             int count = parse_floats_from_string(uniform->initial_value, vecValues, 3);
 

@@ -70,6 +70,13 @@ typedef struct _hardext {
     int glsl320es;      // VGPU specific ; does version 320es glsl shader are supported ?
     int rgba8888;
     int rgba1555rev;
+    int dxtCompression; // GL_EXT_texture_compression_s3tc
+    int dxt1;           // GL_EXT_texture_compression_dxt1
+    int dxt3;           // GL_EXT_texture_compression_dxt3
+    int dxt5;           // GL_EXT_texture_compression_dxt5
+    int dxt1angle;      // GL_ANGLE_texture_compression_dxt1
+    int dxt3angle;      // GL_ANGLE_texture_compression_dxt3
+    int dxt5angle;      // GL_ANGLE_texture_compression_dxt5
 } hardext_t;
 
 extern hardext_t hardext;
