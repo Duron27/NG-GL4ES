@@ -1944,6 +1944,10 @@ void gl4es_glTexStorage1D(GLenum target, GLsizei levels, GLenum internalformat, 
 }
 void gl4es_glTexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
 {
+    LOAD_GLES(glTexStorage2D);
+    gles_glTexStorage2D(target, levels, internalformat, width, height);
+    return;
+
     // (could be implemented in GLES3.0)
     DBG(SHUT_LOGD("glTexStorage2D(%s, %d, %s, %d, %d)\n", PrintEnum(target), levels, PrintEnum(internalformat), width, height);)
     if(!levels) {

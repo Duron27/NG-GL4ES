@@ -119,31 +119,31 @@ void BuildExtensionsList() {
                 "GL_EXT_draw_elements_base_vertex "
                 "GL_ARB_map_buffer_range "
                 "GL_NV_blend_square "
-                "GL_EXT_polygon_offset_clamp"
-                "GL_ARB_clear_texture"
-                "GL_ARB_texture_mirror_clamp_to_edge"
-                "GL_ARB_debug_output"
-                "GL_ARB_enhanced_layouts"
-                "GL_KHR_debug"
-                "GL_ARB_arrays_of_arrays"
-                "GL_ARB_texture_query_levels"
-                "GL_ARB_invalidate_subdata"
-                "GL_ARB_clear_buffer_object"
-                "GL_INTEL_map_texture"
-                "GL_ARB_texture_compression_bptc"
-                "GL_ARB_ES2_compatibility"
-                "GL_ARB_ES3_compatibility"
-                "GL_ARB_robustness"
-                "GL_ARB_robust_buffer_access_behavior"
-                "GL_EXT_texture_sRGB_decode"
-                "GL_ARB_copy_image"
-                "GL_KHR_blend_equation_advanced"
-                "GL_EXT_direct_state_access"
-                "GL_ARB_stencil_texturing"
-                "GL_ARB_texture_stencil8"
-                "GL_ARB_explicit_uniform_location"
-                "GL_ARB_multi_bind"
-                "GL_ARB_indirect_parameters"
+                "GL_EXT_polygon_offset_clamp "
+                "GL_ARB_clear_texture "
+                "GL_ARB_texture_mirror_clamp_to_edge "
+                "GL_ARB_debug_output "
+                "GL_ARB_enhanced_layouts "
+                "GL_KHR_debug "
+                "GL_ARB_arrays_of_arrays "
+                "GL_ARB_texture_query_levels "
+                "GL_ARB_invalidate_subdata "
+                "GL_ARB_clear_buffer_object "
+                "GL_INTEL_map_texture "
+                "GL_ARB_texture_compression_bptc "
+                "GL_ARB_ES2_compatibility "
+                "GL_ARB_ES3_compatibility "
+                "GL_ARB_robustness "
+                "GL_ARB_robust_buffer_access_behavior "
+                "GL_EXT_texture_sRGB_decode "
+                "GL_ARB_copy_image "
+                "GL_KHR_blend_equation_advanced "
+                "GL_EXT_direct_state_access "
+                "GL_ARB_stencil_texturing "
+                "GL_ARB_texture_stencil8 "
+                "GL_ARB_explicit_uniform_location "
+                "GL_ARB_multi_bind "
+                "GL_ARB_indirect_parameters "
 //                "GL_EXT_blend_logic_op "
 				);
 
@@ -153,6 +153,22 @@ void BuildExtensionsList() {
                 "GL_EXT_texture_compression_dxt1 "
                 "GL_EXT_texture_compression_dxt3 "
                 "GL_EXT_texture_compression_dxt5 ");
+
+        if(!globals4es.clipcontrol) {
+            strcat(glstate->extensions, "GL_EXT_clip_control ");
+            strcat(glstate->extensions, "GL_ARB_clip_control ");
+        }
+
+        if(!globals4es.depthclamp) {
+            strcat(glstate->extensions, "GL_EXT_depth_clamp ");
+            strcat(glstate->extensions, "GL_ARB_depth_clamp ");
+        }
+
+        // es3 core stuff?
+            strcat(glstate->extensions, "GL_EXT_texture_rg ");
+            strcat(glstate->extensions, "GL_ARB_depth_buffer_float ");
+            strcat(glstate->extensions, "GL_ARB_shadow ");
+
 
         if(!globals4es.notexrect)
             strcat(glstate->extensions, "GL_ARB_texture_rectangle ");
