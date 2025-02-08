@@ -22,13 +22,13 @@ int NO_OPERATOR_VALUE = 9999;
 #include <stdlib.h>
 #include <ctype.h>
 
-// ¸¨Öúº¯Êı£º½âÎö²¢ÌáÈ¡¸¡µãÊıÊı×é£¨ÓÃÓÚ mat2, mat3, mat4, vec2, vec3, vec4 ÀàĞÍµÄ´¦Àí£©
+// è¾…åŠ©å‡½æ•°ï¼šè§£æå¹¶æå–æµ®ç‚¹æ•°æ•°ç»„ï¼ˆç”¨äº mat2, mat3, mat4, vec2, vec3, vec4 ç±»å‹çš„å¤„ç†ï¼‰
 int parse_floats_from_string(const char* str, GLfloat* outValues, int maxCount) {
     int count = 0;
     const char* cursor = str;
 
     while (*cursor && count < maxCount) {
-        // ²éÕÒÊı×Ö
+        // æŸ¥æ‰¾æ•°å­—
         while (*cursor && !isdigit((unsigned char)*cursor) && *cursor != '-') cursor++;
 
         if (*cursor) {
@@ -38,7 +38,7 @@ int parse_floats_from_string(const char* str, GLfloat* outValues, int maxCount) 
     return count;
 }
 
-// ¸¨Öúº¯Êı£º½âÎö bool ÀàĞÍ
+// è¾…åŠ©å‡½æ•°ï¼šè§£æ bool ç±»å‹
 int parse_bool_from_string(const char* str) {
     if (strcmp(str, "true") == 0) {
         return GL_TRUE;
@@ -46,7 +46,7 @@ int parse_bool_from_string(const char* str) {
     if (strcmp(str, "false") == 0) {
         return GL_FALSE;
     }
-    return -1;  // ÎŞĞ§µÄ²¼¶ûÖµ
+    return -1;  // æ— æ•ˆçš„å¸ƒå°”å€¼
 }
 
 bool has_valid_data(char arr[256]) {
@@ -117,7 +117,7 @@ void set_uniforms_default_value(GLuint program, uniforms_declarations uniformVec
             }
         }
         else if (strstr(uniform->initial_value, "vec3") != NULL) {
-            // ´¦Àí vec3 ÀàĞÍ
+            // å¤„ç† vec3 ç±»å‹
             GLfloat vecValues[3];
             int count = parse_floats_from_string(uniform->initial_value, vecValues, 3);
 
@@ -203,7 +203,7 @@ char* process_uniform_declarations(char* glslCode, uniforms_declarations uniform
             while (isspace((unsigned char)*cursor)) cursor++;
 
             i = 0;
-            while (isalnum((unsigned char)*cursor) || *cursor == '_' || *cursor == '[' || *cursor == ']') {
+            while (isalnum((unsigned char)*cursor) || *cursor == '_' || *cursor == '[' || *cursor == ']' || *cursor == '(' || *cursor ==')' || *cursor == ".") {
                 name[i++] = *cursor++;
             }
             name[i] = '\0';
@@ -272,6 +272,35 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
     // First, vanilla gl4es, no forward port
     shader_source->converted = ConvertShader(shader_source->source, shader_source->type == GL_VERTEX_SHADER ? 1 : 0,&shader_source->need, 0);
     shaderCompileStatus = testGenericShader(shader_source);
+
+//if(FindString(shader_source->source, "#define NOSHADERCONV") || FindString(shader_source->converted, "#define NOSHADERCONV"))
+{
+    // Get the shader source
+    char * source = shader_source->converted;
+    int sourceLength = strlen(source) + 1;
+
+    source = InplaceReplaceSimple(source, &sourceLength, "#version 120", "#version 320 es\n#extension GL_OES_standard_derivatives : enable\nprecision highp float;\nprecision mediump int;\nprecision highp sampler2D;\nprecision lowp sampler2DShadow;\n\n");
+    source = InplaceReplaceSimple(source, &sourceLength, "#version 100", "#version 320 es\n#extension GL_OES_standard_derivatives : enable\nprecision highp float;\nprecision mediump int;\nprecision highp sampler2D;\nprecision lowp sampler2DShadow;\n\n");
+    source = InplaceReplaceSimple(source, &sourceLength, "#define texture texture2D", "#define texture2D texture");
+    source = InplaceReplaceSimple(source, &sourceLength, "#define textureProj texture2DProj", "#define texture2DProj textureProj");
+    source = InplaceReplaceSimple(source, &sourceLength, "shadow2DProj", "textureProj");
+    source = InplaceReplaceSimple(source, &sourceLength, "textureSize2D", "textureSize");
+
+            if (shader_source->type == GL_VERTEX_SHADER){
+                source = ReplaceVariableName(source, &sourceLength, "attribute", "in");
+                source = ReplaceVariableName(source, &sourceLength, "varying", "out");
+            }
+            else {
+                source = ReplaceVariableName(source, &sourceLength, "varying", "in");
+                source = ReplaceGLFragData(source, &sourceLength);
+                source = ReplaceGLFragColor(source, &sourceLength);
+            }
+
+            shader_source->converted = source;
+
+            return shader_source->converted;
+
+}
 
     // Then, attempt back porting if desired of constrained to do so
     if(!shaderCompileStatus && globals4es.vgpu_backport) {
@@ -687,6 +716,7 @@ char * InsertExtensions(char *source, int *sourceLength){
     source = InsertExtension(source, sourceLength, insertPoint+1, "GL_EXT_texture_cube_map_array");
     source = InsertExtension(source, sourceLength, insertPoint+1, "GL_EXT_texture_buffer");
     source = InsertExtension(source, sourceLength, insertPoint+1, "GL_OES_texture_storage_multisample_2d_array");
+    source = InsertExtension(source, sourceLength, insertPoint+1, "GL_EXT_gpu_shader5");
     return source;
 }
 

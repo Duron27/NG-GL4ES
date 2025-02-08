@@ -513,6 +513,8 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
     Tmp = InplaceInsert(Tmp, GLESFullHeader, Tmp, &tmpsize);
   }
   int headline = 3;
+
+/*
   int texture3D = (strstr(pBuffer, "texture3D")) ? 1 : 0;
   const char* GLESUseTexture3D = "#extension GL_OES_texture_3D : enable\nprecision lowp sampler3D;\n";
   if (texture3D)
@@ -525,7 +527,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
   const char* GLESUseFragDepth = "#extension GL_EXT_frag_depth : enable\n";
   const char* GLESFakeFragDepth = "mediump float fakeFragDepth = 0.0;\n";
   if (fragdepth) {
-    /* If #extension is used, it should be placed before the second line of the header. */
+    // If #extension is used, it should be placed before the second line of the header. 
     if(hardext.fragdepth)
       Tmp = InplaceInsert(GetLine(Tmp, 1), GLESUseFragDepth, Tmp, &tmpsize);
     else
@@ -547,7 +549,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
   "float fwidth(float p) {return abs(dFdx(p))+abs(dFdy(p));}\nvec2 fwidth(vec2 p) {return abs(dFdx(p))+abs(dFdy(p));}\n"
   "vec3 fwidth(vec3 p) {return abs(dFdx(p))+abs(dFdy(p));}\n";
   if (derivatives) {
-    /* If #extension is used, it should be placed before the second line of the header. */
+    // If #extension is used, it should be placed before the second line of the header. 
     if(hardext.derivatives)
       Tmp = InplaceInsert(GetLine(Tmp, 1), GLESUseDerivative, Tmp, &tmpsize);
     else
@@ -686,6 +688,8 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
     newptr++;
   }
   Tmp = InplaceReplace(Tmp, &tmpsize, "gl_FragDepth", (hardext.fragdepth)?"gl_FragDepthEXT":"fakeFragDepth");
+
+*/
   // builtin attribs
   if(isVertex) {
   // ANGLE already has ftransform, so skip it
@@ -827,11 +831,13 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
 
   // builtin matrices work
   {
+/*
     if(strstr(Tmp, "transpose(") || strstr(Tmp, "transpose ") || strstr(Tmp, "transpose\t")) {
       Tmp = InplaceInsert(GetLine(Tmp, headline), gl4es_transpose, Tmp, &tmpsize);
       InplaceReplace(Tmp, &tmpsize, "transpose", "gl4es_transpose");
       // don't increment headline count, as all variying and attributes should be created before
     }
+*/
     // check for builtin matrix uniform...
     {
       // first check number of texture matrices used
@@ -932,6 +938,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
         ++p;
     }
   }*/
+/*
   // cleaning up the "centroid" keyword...
   if(strstr(Tmp, "centroid"))
   {
@@ -947,7 +954,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
       p+=8;
     }
   }
-
+*/
   // check for builtin OpenGL gl_LightSource & friends
   if(strstr(Tmp, "gl_LightSourceParameters") || strstr(Tmp, "gl_LightSource"))
   {
@@ -1045,6 +1052,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
     headline+=CountLine(gl4es_texenvcolorSource);
     Tmp = InplaceReplace(Tmp, &tmpsize, "gl_TextureEnvColor", "_gl4es_TextureEnvColor");
   }
+/*
   if(strstr(Tmp, "gl_EyePlaneS")) {
     Tmp = InplaceInsert(GetLine(Tmp, headline), gl4es_texgeneyeSource[0], Tmp, &tmpsize);
     headline+=CountLine(gl4es_texgeneyeSource[0]);
@@ -1085,7 +1093,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
     headline+=CountLine(gl4es_texgenobjSource[3]);
     Tmp = InplaceReplace(Tmp, &tmpsize, "gl_ObjectPlaneQ", "_gl4es_ObjectPlaneQ");
   }
-
+*/
   if(strstr(Tmp, "gl_MaxTextureUnits")) {
     Tmp = InplaceInsert(GetLine(Tmp, 2), gl4es_MaxTextureUnitsSource, Tmp, &tmpsize);
     headline+=CountLine(gl4es_MaxTextureUnitsSource);
