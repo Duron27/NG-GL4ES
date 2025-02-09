@@ -495,7 +495,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
     /* else no location or in / out are supported */
   }
   //sprintf(GLESFullHeader, GLESHeader, (wanthighp && hardext.highp==1 && !isVertex)?GLESUseFragHighp:"", (wanthighp)?"highp":"mediump", (wanthighp)?"highp":"mediump");
-  sprintf(GLESFullHeader, GLESHeader[versionHeader], "", (wanthighp)?"highp":"mediump", (wanthighp)?"highp":"mediump");
+  sprintf(GLESFullHeader, "#version 120");
 
   int tmpsize = strlen(pBuffer)*2+strlen(GLESFullHeader)+100;
   char* Tmp = (char*)calloc(1, tmpsize);
@@ -560,6 +560,8 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
   if(hardext.maxdrawbuffers>1 && strstr(pBuffer, "gl_FragData[")) {
     Tmp = InplaceInsert(GetLine(Tmp, 1), useEXTDrawBuffers, Tmp, &tmpsize);
   }
+*/
+/*
   // if some functions are used, add some int/float alternative
   if(!fpeShader && !globals4es.nointovlhack) {
     if(strstr(Tmp, "pow(") || strstr(Tmp, "pow (")) {
@@ -578,6 +580,8 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
         Tmp = InplaceInsert(GetLine(Tmp, headline), HackAltMod, Tmp, &tmpsize);
     }
   }
+*/
+/*
   if(!isVertex && hardext.shaderlod &&
     (FindString(Tmp, "texture2DLod") || FindString(Tmp, "texture2DProjLod")
   || FindString(Tmp, "textureCubeLod")
@@ -1219,7 +1223,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
   GO(3D)
   GO(Cube)
   #undef GO
-
+/*
   // non-square matrix handling
   // the square one first
   if(strstr(Tmp, "mat2x2")) {
@@ -1238,7 +1242,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
       const char* GLESForwardPort = "#define texture texture2D\n #define textureProj texture2DProj\n #define mod(a,b) (int(a) - int(b) * int(a/b))\n";
       Tmp = InplaceInsert(GetLine(Tmp, 1), GLESForwardPort, Tmp, &tmpsize);
   }
-
+*/
   // finish
   if((globals4es.dbgshaderconv&maskafter)==maskafter) {
     printf("New Shader source:\n%s\n", Tmp);

@@ -1411,11 +1411,19 @@ void gl4es_glFramebufferTextureLayer(	GLenum target, GLenum attachment, GLuint t
     gl4es_glFramebufferTexture2D(target, attachment, GL_TEXTURE_2D, texture,	level); // Force Texture2D, ignore layer (should track?)...
 }
 
+typedef void (*glBlitFramebuffer_PTR)(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter);
+
+
 void gl4es_glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1, GLint dstX0, GLint dstY0, GLint dstX1, GLint dstY1, GLbitfield mask, GLenum filter) {
     // mask will be ignored
     // filter will be taken only for ReadFBO has no Texture attached (so readpixel is used)
     DBG(SHUT_LOGD("glBlitFramebuffer(%d, %d, %d, %d,  %d, %d, %d, %d,  0x%04X, %s) fbo_read=%d, fbo_draw=%d\n",
         srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, PrintEnum(filter), glstate->fbo.fbo_read->id, glstate->fbo.fbo_draw->id);)
+
+    LOAD_GLES2(glBlitFramebuffer);
+    gles_glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
+    return;
+
     GLint viewport[4];
     gl4es_glGetIntegerv(GL_VIEWPORT, viewport);
     GLint width = viewport[2];
@@ -1511,10 +1519,11 @@ void gl4es_setCurrentFBO() {
 }
 
 // DrawBuffers functions are faked unless GL_EXT_draw_buffers is supported
+typedef void (*glDrawBuffers_PTR)(GLsizei n, const GLenum *bufs);
 void gl4es_glDrawBuffers(GLsizei n, const GLenum *bufs) {
     DBG(SHUT_LOGD("glDrawBuffers(%d, %p) [0]=%s\n", n, bufs, n?PrintEnum(bufs[0]):"nil");)
     if(hardext.drawbuffers) {
-        LOAD_GLES_EXT(glDrawBuffers);
+        LOAD_GLES(glDrawBuffers);
         gles_glDrawBuffers(n, bufs);
         errorGL();
     } else {
@@ -1536,7 +1545,7 @@ void gl4es_glNamedFramebufferDrawBuffers(GLuint framebuffer, GLsizei n, const GL
     if(hardext.drawbuffers) {
         GLuint oldf = glstate->fbo.fbo_draw->id;
         gl4es_glBindFramebuffer(GL_DRAW_FRAMEBUFFER, fb->id);
-        LOAD_GLES_EXT(glDrawBuffers);
+        LOAD_GLES(glDrawBuffers);
         gles_glDrawBuffers(n, bufs);
         errorGL();
         gl4es_glBindFramebuffer(GL_DRAW_FRAMEBUFFER, oldf);
@@ -1547,7 +1556,17 @@ void gl4es_glNamedFramebufferDrawBuffers(GLuint framebuffer, GLsizei n, const GL
 }
 
 
+typedef void (*glClearBufferiv_PTR)(GLenum buffer, GLint drawbuffer, const GLint * value);
+typedef void (*glClearBufferuiv_PTR)(GLenum buffer, GLint drawbuffer, const GLuint * value);
+typedef void (*glClearBufferfv_PTR)(GLenum buffer, GLint drawbuffer, const GLfloat * value);
+typedef void (*glClearBufferfi_PTR)(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil);
+
 void gl4es_glClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint * value) {
+
+    LOAD_GLES(glClearBufferiv);
+    gles_glClearBufferiv(buffer, drawbuffer, value);
+    return;
+
     noerrorShim();
     GLenum attch;
     switch(buffer) {
@@ -1560,7 +1579,7 @@ void gl4es_glClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint * value)
                 return;
             } else {
                 GLfloat oldclear[4];
-                LOAD_GLES_EXT(glDrawBuffers);
+                LOAD_GLES(glDrawBuffers);
                 // select the buffer...
                 if(hardext.drawbuffers)
                     gles_glDrawBuffers(1, &drawbuffer);
@@ -1593,6 +1612,11 @@ void gl4es_glClearBufferiv(GLenum buffer, GLint drawbuffer, const GLint * value)
     return;
 }
 void gl4es_glClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLuint * value) {
+
+    LOAD_GLES(glClearBufferuiv);
+    gles_glClearBufferuiv(buffer, drawbuffer, value);
+    return;
+
     noerrorShim();
     GLenum attch;
     switch(buffer) {
@@ -1605,7 +1629,7 @@ void gl4es_glClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLuint * valu
                 return;
             } else {
                 GLfloat oldclear[4];
-                LOAD_GLES_EXT(glDrawBuffers);
+                LOAD_GLES(glDrawBuffers);
                 // select the buffer...
                 if(hardext.drawbuffers)
                     gles_glDrawBuffers(1, &drawbuffer);
@@ -1626,6 +1650,11 @@ void gl4es_glClearBufferuiv(GLenum buffer, GLint drawbuffer, const GLuint * valu
     return;
 }
 void gl4es_glClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat * value) {
+
+    LOAD_GLES(glClearBufferfv);
+    gles_glClearBufferfv(buffer, drawbuffer, value);
+    return;
+
     noerrorShim();
     GLenum attch;
     switch(buffer) {
@@ -1638,7 +1667,7 @@ void gl4es_glClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat * valu
                 return;
             } else {
                 GLfloat oldclear[4];
-                LOAD_GLES_EXT(glDrawBuffers);
+                LOAD_GLES(glDrawBuffers);
                 // select the buffer...
                 if(hardext.drawbuffers)
                     gles_glDrawBuffers(1, &drawbuffer);
@@ -1671,6 +1700,11 @@ void gl4es_glClearBufferfv(GLenum buffer, GLint drawbuffer, const GLfloat * valu
     return;
 }
 void gl4es_glClearBufferfi(GLenum buffer, GLint drawbuffer, GLfloat depth, GLint stencil) {
+
+    LOAD_GLES(glClearBufferfi);
+    gles_glClearBufferfi(buffer, drawbuffer, depth, stencil);
+    return;
+
     if(buffer!=GL_DEPTH_STENCIL || drawbuffer!=0) {
         errorShim(GL_INVALID_ENUM);
         return;

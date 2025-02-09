@@ -203,7 +203,7 @@ char* process_uniform_declarations(char* glslCode, uniforms_declarations uniform
             while (isspace((unsigned char)*cursor)) cursor++;
 
             i = 0;
-            while (isalnum((unsigned char)*cursor) || *cursor == '_' || *cursor == '[' || *cursor == ']' || *cursor == '(' || *cursor ==')' || *cursor == ".") {
+            while (isalnum((unsigned char)*cursor) || *cursor == '_' || *cursor == '[' || *cursor == ']' || *cursor == '(' || *cursor ==')' || *cursor == '.') {
                 name[i++] = *cursor++;
             }
             name[i] = '\0';
@@ -271,36 +271,47 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
 
     // First, vanilla gl4es, no forward port
     shader_source->converted = ConvertShader(shader_source->source, shader_source->type == GL_VERTEX_SHADER ? 1 : 0,&shader_source->need, 0);
-    shaderCompileStatus = testGenericShader(shader_source);
+ //   shaderCompileStatus = testGenericShader(shader_source);
 
-//if(FindString(shader_source->source, "#define NOSHADERCONV") || FindString(shader_source->converted, "#define NOSHADERCONV"))
-{
     // Get the shader source
     char * source = shader_source->converted;
     int sourceLength = strlen(source) + 1;
-
-    source = InplaceReplaceSimple(source, &sourceLength, "#version 120", "#version 320 es\n#extension GL_OES_standard_derivatives : enable\nprecision highp float;\nprecision mediump int;\nprecision highp sampler2D;\nprecision lowp sampler2DShadow;\n\n");
-    source = InplaceReplaceSimple(source, &sourceLength, "#version 100", "#version 320 es\n#extension GL_OES_standard_derivatives : enable\nprecision highp float;\nprecision mediump int;\nprecision highp sampler2D;\nprecision lowp sampler2DShadow;\n\n");
-    source = InplaceReplaceSimple(source, &sourceLength, "#define texture texture2D", "#define texture2D texture");
-    source = InplaceReplaceSimple(source, &sourceLength, "#define textureProj texture2DProj", "#define texture2DProj textureProj");
+/*
+    source = InplaceReplaceSimple(source, &sourceLength, "texture2D", "texture");
+    source = InplaceReplaceSimple(source, &sourceLength, "texture3D", "texture");
+    source = InplaceReplaceSimple(source, &sourceLength, "texture2DProj", "textureProj");
     source = InplaceReplaceSimple(source, &sourceLength, "shadow2DProj", "textureProj");
     source = InplaceReplaceSimple(source, &sourceLength, "textureSize2D", "textureSize");
+*/
+    if (shader_source->type == GL_VERTEX_SHADER) {
+        source = ReplaceVariableName(source, &sourceLength, "attribute", "in");
+        source = ReplaceVariableName(source, &sourceLength, "varying", "out");
+    }
+    else {
+        source = ReplaceVariableName(source, &sourceLength, "varying", "in");
+        source = ReplaceGLFragData(source, &sourceLength);
+        source = ReplaceGLFragColor(source, &sourceLength);
+    }
 
-            if (shader_source->type == GL_VERTEX_SHADER){
-                source = ReplaceVariableName(source, &sourceLength, "attribute", "in");
-                source = ReplaceVariableName(source, &sourceLength, "varying", "out");
-            }
-            else {
-                source = ReplaceVariableName(source, &sourceLength, "varying", "in");
-                source = ReplaceGLFragData(source, &sourceLength);
-                source = ReplaceGLFragColor(source, &sourceLength);
-            }
+    source = BackportConstArrays(source, &sourceLength);
 
-            shader_source->converted = source;
+    source = InplaceReplaceSimple(source, &sourceLength, "#version 120",
+        "#version 310 es\n\
+         #extension GL_EXT_shader_non_constant_global_initializers : enable\n\
+         #extension GL_OES_standard_derivatives : enable\n\
+         precision highp float;\n\
+         precision mediump int;\n\
+         precision lowp sampler2D;\n\
+         precision lowp sampler2DShadow;\n\
+         #define sample sample2\n\
+         #define texture2D texture\n\
+         #define texture3D texture\n\
+         #define texture2DProj textureProj\n\
+         #define shadow2DProj textureProj\n\
+         #define textureSize2D textureSize\n");
 
-            return shader_source->converted;
-
-}
+    shader_source->converted = source;
+    return shader_source->converted;
 
     // Then, attempt back porting if desired of constrained to do so
     if(!shaderCompileStatus && globals4es.vgpu_backport) {

@@ -154,18 +154,20 @@ void BuildExtensionsList() {
                 "GL_EXT_texture_compression_dxt3 "
                 "GL_EXT_texture_compression_dxt5 ");
 
-        if(!globals4es.clipcontrol) {
+        if(hardext.clipcontrol) {
             strcat(glstate->extensions, "GL_EXT_clip_control ");
             strcat(glstate->extensions, "GL_ARB_clip_control ");
         }
 
-        if(!globals4es.depthclamp) {
+        if(hardext.depthclamp) {
             strcat(glstate->extensions, "GL_EXT_depth_clamp ");
             strcat(glstate->extensions, "GL_ARB_depth_clamp ");
         }
 
         // es3 core stuff?
+            strcat(glstate->extensions, "GL_EXT_texture3D ");
             strcat(glstate->extensions, "GL_EXT_texture_rg ");
+            strcat(glstate->extensions, "GL_ARB_color_buffer_float ");
             strcat(glstate->extensions, "GL_ARB_depth_buffer_float ");
             strcat(glstate->extensions, "GL_ARB_shadow ");
 

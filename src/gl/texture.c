@@ -1942,8 +1942,11 @@ void gl4es_glTexStorage1D(GLenum target, GLsizei levels, GLenum internalformat, 
     DBG(SHUT_LOGD("glTexStorage1D(%s, %d, %s, %d)\n", PrintEnum(target), levels, PrintEnum(internalformat), width);)
     gl4es_glTexImage1D(target, 0, internalformat, width, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
 }
+typedef void (*glTexStorage2D_PTR)(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height);
+
 void gl4es_glTexStorage2D(GLenum target, GLsizei levels, GLenum internalformat, GLsizei width, GLsizei height)
 {
+
     LOAD_GLES(glTexStorage2D);
     gles_glTexStorage2D(target, levels, internalformat, width, height);
     return;

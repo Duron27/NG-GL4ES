@@ -4,7 +4,7 @@
 #include "init.h"
 #include "loader.h"
 
-
+typedef void (*glClipControlEXT_PTR)(GLenum origin, GLenum depthMode);
 void gl4es_glClipControlEXT(GLenum origin, GLenum depthMode) {
     LOAD_GLES(glClipControlEXT);
     gles_glClipControlEXT(origin, depthMode);
@@ -94,15 +94,6 @@ GLboolean gl4es_glIsEnablediEXT(GLenum target, GLuint index)
 void glIsEnablediEXT(GLenum target, GLuint index) AliasExport("gl4es_glIsEnablediEXT");
 void glIsEnabledi(GLenum target, GLuint index) AliasExport("gl4es_glIsEnablediEXT");
 
-
-typedef void (*glClipControlEXT_PTR)(GLenum origin, GLenum depthMode);
-GLboolean gl4es_glClipControlEXT(GLenum origin, GLenum depthMode)
-{
-    LOAD_GLES(glClipControlEXT);
-    return gles_glClipControlEXT(GLenum origin, GLenum depthMode);
-}
-
-void glClipControlEXT(GLenum origin, GLenum depthMode) AliasExport("gl4es_glClipControlEXT");
 
 
 
