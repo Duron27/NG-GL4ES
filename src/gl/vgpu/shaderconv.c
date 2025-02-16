@@ -171,7 +171,7 @@ int startsWith(char* str, char* prefix) {
 
 char* process_uniform_declarations(char* glslCode, uniforms_declarations uniformVector, int* uniformCount) {
     char* cursor = glslCode;
-    char name[256], type[256], initial_value[1024];
+    char name[256], type[256], uniform_size[16], initial_value[1024], body[1024];
     int modifiedCodeIndex = 0;
     size_t maxLength = 1024 * 10;
     char* modifiedGlslCode = (char*)malloc(maxLength * sizeof(char));
@@ -203,11 +203,22 @@ char* process_uniform_declarations(char* glslCode, uniforms_declarations uniform
             while (isspace((unsigned char)*cursor)) cursor++;
 
             i = 0;
-            while (isalnum((unsigned char)*cursor) || *cursor == '_' || *cursor == '[' || *cursor == ']' || *cursor == '(' || *cursor ==')' || *cursor == '.') {
+            while (isalnum((unsigned char)*cursor) || *cursor == '_') {
                 name[i++] = *cursor++;
             }
             name[i] = '\0';
             while (isspace((unsigned char)*cursor)) cursor++;
+
+            uniform_size[0] = '\0';
+            if (*cursor == '[') {
+                cursor++;
+                i = 0;
+                while (*cursor && *cursor != ']') {
+                    uniform_size[i++] = *cursor++;
+                }
+                uniform_size[i] = '\0';
+                trim(uniform_size);
+            }
 
             initial_value[0] = '\0';
             if (*cursor == '=') {
@@ -220,6 +231,14 @@ char* process_uniform_declarations(char* glslCode, uniforms_declarations uniform
                 trim(initial_value);
             }
 
+            body[0] = '\0';
+            if (*cursor == '{') {
+                i = 0;
+                while (*cursor && *cursor != '}') {
+                    body[i++] = *cursor++;
+                }
+                body[i] = '\0';
+            }
             strcpy(uniformVector[*uniformCount].variable, name);
             strcpy(uniformVector[*uniformCount].initial_value, initial_value);
             (*uniformCount)++;
@@ -231,8 +250,10 @@ char* process_uniform_declarations(char* glslCode, uniforms_declarations uniform
             int spaceLeft = maxLength - modifiedCodeIndex;
             int len = 0;
 
-            if (*initial_value) {
-                len = snprintf(modifiedGlslCode + modifiedCodeIndex, spaceLeft, "uniform %s %s;", type, name);
+            if (*body) {
+                len = snprintf(modifiedGlslCode + modifiedCodeIndex, spaceLeft, "uniform %s %s %s};", type, name, body);
+            } else if (*uniform_size) {
+                len = snprintf(modifiedGlslCode + modifiedCodeIndex, spaceLeft, "uniform %s %s[%s];", type, name, uniform_size);
             } else {
                 len = snprintf(modifiedGlslCode + modifiedCodeIndex, spaceLeft, "uniform %s %s;", type, name);
             }
@@ -273,45 +294,51 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
     shader_source->converted = ConvertShader(shader_source->source, shader_source->type == GL_VERTEX_SHADER ? 1 : 0,&shader_source->need, 0);
  //   shaderCompileStatus = testGenericShader(shader_source);
 
-    // Get the shader source
-    char * source = shader_source->converted;
-    int sourceLength = strlen(source) + 1;
-/*
-    source = InplaceReplaceSimple(source, &sourceLength, "texture2D", "texture");
-    source = InplaceReplaceSimple(source, &sourceLength, "texture3D", "texture");
-    source = InplaceReplaceSimple(source, &sourceLength, "texture2DProj", "textureProj");
-    source = InplaceReplaceSimple(source, &sourceLength, "shadow2DProj", "textureProj");
-    source = InplaceReplaceSimple(source, &sourceLength, "textureSize2D", "textureSize");
-*/
-    if (shader_source->type == GL_VERTEX_SHADER) {
-        source = ReplaceVariableName(source, &sourceLength, "attribute", "in");
-        source = ReplaceVariableName(source, &sourceLength, "varying", "out");
+    if (globals4es.simple_shaderconv) 
+    {
+        // Get the shader source
+        char * source = shader_source->converted;
+        int sourceLength = strlen(source) + 1;
+
+        if (shader_source->type == GL_VERTEX_SHADER) {
+            source = ReplaceVariableName(source, &sourceLength, "attribute", "in");
+            source = ReplaceVariableName(source, &sourceLength, "varying", "out");
+        }
+        else {
+            source = ReplaceVariableName(source, &sourceLength, "varying", "in");
+            source = ReplaceGLFragData(source, &sourceLength);
+            source = ReplaceGLFragColor(source, &sourceLength);
+        }
+
+        source = BackportConstArrays(source, &sourceLength);
+
+        source = InplaceReplaceSimple(source, &sourceLength, "#version 120",
+"#version 310 es\n\
+#extension GL_EXT_shader_non_constant_global_initializers : enable\n\
+#extension GL_OES_standard_derivatives : enable\n\
+#extension GL_EXT_gpu_shader5 : enable\n\
+#extension GL_EXT_shader_implicit_conversions : enable\n\
+precision highp float;\n\
+precision mediump int;\n\
+precision lowp sampler2D;\n\
+precision lowp sampler2DShadow;\n\
+#define sample sample2\n\
+#define texture2D texture\n\
+#define texture3D texture\n\
+#define texture2DProj textureProj\n\
+#define shadow2DProj textureProj\n\
+#define textureSize2D textureSize\n\");
+
+        shader_source->converted = source;
+
+        // Process uniform declarations
+        shader_source->converted = process_uniform_declarations(shader_source->converted, shader_source->uniforms_declarations, &shader_source->uniforms_declarations_count);
+
+        return shader_source->converted;
+
     }
-    else {
-        source = ReplaceVariableName(source, &sourceLength, "varying", "in");
-        source = ReplaceGLFragData(source, &sourceLength);
-        source = ReplaceGLFragColor(source, &sourceLength);
-    }
-
-    source = BackportConstArrays(source, &sourceLength);
-
-    source = InplaceReplaceSimple(source, &sourceLength, "#version 120",
-        "#version 310 es\n\
-         #extension GL_EXT_shader_non_constant_global_initializers : enable\n\
-         #extension GL_OES_standard_derivatives : enable\n\
-         precision highp float;\n\
-         precision mediump int;\n\
-         precision lowp sampler2D;\n\
-         precision lowp sampler2DShadow;\n\
-         #define sample sample2\n\
-         #define texture2D texture\n\
-         #define texture3D texture\n\
-         #define texture2DProj textureProj\n\
-         #define shadow2DProj textureProj\n\
-         #define textureSize2D textureSize\n");
-
-    shader_source->converted = source;
-    return shader_source->converted;
+    else
+        shaderCompileStatus = testGenericShader(shader_source);
 
     // Then, attempt back porting if desired of constrained to do so
     if(!shaderCompileStatus && globals4es.vgpu_backport) {

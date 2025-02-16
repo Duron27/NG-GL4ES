@@ -638,6 +638,7 @@ void initialize_gl4es() {
         SHUT_LOGD("VGPU default precision overridden ! (%i)", globals4es.vgpu_precision);
     }
 
+    env(LIBGL_SIMPLE_SHADERCONV, globals4es.simple_shaderconv, "Using simple/custom shaderconv");
 
     env(LIBGL_NOCLEAN, globals4es.noclean, "Don't clean Context when destroy");
 
