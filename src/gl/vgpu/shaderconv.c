@@ -329,7 +329,6 @@ precision lowp sampler2DShadow;\n\
 #define texture2DProj textureProj\n\
 #define shadow2DProj textureProj\n\
 #define textureSize2D textureSize\n\
-#define GL_OES_standard_derivatives 1\n\
 ");
 
         shader_source->converted = source;
