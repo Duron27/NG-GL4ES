@@ -1010,12 +1010,12 @@ void gl4es_glTexImage2D(GLenum target, GLint level, GLint internalformat,
     if(internalformat == GL_R16F ) internal2format_type(internalformat, &format, &type);
     if(data==NULL && (internalformat == GL_RED || internalformat == GL_RGB))
         internal2format_type(internalformat, &format, &type);
-
+/*
     if (internalformat == GL_DEPTH32F_STENCIL8 && type == GL_FLOAT_32_UNSIGNED_INT_24_8_REV) {
         internalformat = GL_DEPTH24_STENCIL8;
         type = GL_UNSIGNED_INT_24_8;
     }
-
+*/
     // proxy case
     const GLuint itarget = what_target(target);
     const GLuint rtarget = map_tex_target(target);
