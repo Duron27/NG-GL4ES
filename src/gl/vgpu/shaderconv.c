@@ -159,6 +159,9 @@ void set_uniforms_default_value(GLuint program, uniforms_declarations uniformVec
         else if (strstr(uniform->initial_value, "sampler2D") != NULL) {
             glUniform1i(location, 0);
         }
+        else if (strstr(uniform->initial_value, "sampler2DShadow") != NULL) {
+            glUniform1i(location, 0);
+        }
         else {
             SHUT_LOGE("[ERROR] Unsupported uniform type or invalid initial value for uniform %s\n", uniform->variable);
         }
@@ -290,12 +293,10 @@ char* process_uniform_declarations(char* glslCode, uniforms_declarations uniform
 char * ConvertShaderConditionally(struct shader_s * shader_source){
     int shaderCompileStatus;
 
-    // First, vanilla gl4es, no forward port
-    shader_source->converted = ConvertShader(shader_source->source, shader_source->type == GL_VERTEX_SHADER ? 1 : 0,&shader_source->need, 0);
- //   shaderCompileStatus = testGenericShader(shader_source);
-
-    if (globals4es.simple_shaderconv) 
+    if (globals4es.simple_shaderconv == 1) 
     {
+        shader_source->converted = ConvertShader(shader_source->source, shader_source->type == GL_VERTEX_SHADER ? 1 : 0,&shader_source->need, 1);
+
         // Get the shader source
         char * source = shader_source->converted;
         int sourceLength = strlen(source) + 1;
@@ -313,7 +314,7 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
         source = BackportConstArrays(source, &sourceLength);
 
         source = InplaceReplaceSimple(source, &sourceLength, "#version 120",
-"#version 310 es\n\
+"#version 320 es\n\
 #extension GL_EXT_shader_non_constant_global_initializers : enable\n\
 #extension GL_OES_standard_derivatives : enable\n\
 #extension GL_EXT_gpu_shader5 : enable\n\
@@ -327,7 +328,9 @@ precision lowp sampler2DShadow;\n\
 #define texture3D texture\n\
 #define texture2DProj textureProj\n\
 #define shadow2DProj textureProj\n\
-#define textureSize2D textureSize\n\");
+#define textureSize2D textureSize\n\
+#define GL_OES_standard_derivatives 1\n\
+");
 
         shader_source->converted = source;
 
@@ -337,9 +340,11 @@ precision lowp sampler2DShadow;\n\
         return shader_source->converted;
 
     }
-    else
-        shaderCompileStatus = testGenericShader(shader_source);
-
+    
+    // First, vanilla gl4es, no forward port
+    shader_source->converted = ConvertShader(shader_source->source, shader_source->type == GL_VERTEX_SHADER ? 1 : 0,&shader_source->need, 0);
+    shaderCompileStatus = testGenericShader(shader_source);
+    
     // Then, attempt back porting if desired of constrained to do so
     if(!shaderCompileStatus && globals4es.vgpu_backport) {
         shader_source->converted = ConvertShader(shader_source->source, shader_source->type == GL_VERTEX_SHADER ? 1 : 0,&shader_source->need, 0);
