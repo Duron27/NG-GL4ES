@@ -4,6 +4,7 @@
 #include "init.h"
 #include "loader.h"
 
+// glClipControl
 typedef void (*glClipControlEXT_PTR)(GLenum origin, GLenum depthMode);
 void gl4es_glClipControlEXT(GLenum origin, GLenum depthMode) {
     LOAD_GLES(glClipControlEXT);
@@ -19,7 +20,7 @@ void glClipControl(GLenum origin, GLenum depthMode) AliasExport("gl4es_glClipCon
 void glClipControlEXT(GLenum origin, GLenum depthMode) AliasExport("gl4es_glClipControlEXT");
 
 
-
+// Multi render targets
 typedef void (*glEnableiEXT_PTR)(GLenum target, GLuint index);
 void gl4es_glEnableiEXT(GLenum target, GLuint index);
 
@@ -91,8 +92,59 @@ GLboolean gl4es_glIsEnablediEXT(GLenum target, GLuint index)
     return gles_glIsEnablediEXT(target, index);
 }
 
-void glIsEnablediEXT(GLenum target, GLuint index) AliasExport("gl4es_glIsEnablediEXT");
-void glIsEnabledi(GLenum target, GLuint index) AliasExport("gl4es_glIsEnablediEXT");
+bool glIsEnablediEXT(GLenum target, GLuint index) AliasExport("gl4es_glIsEnablediEXT");
+bool glIsEnabledi(GLenum target, GLuint index) AliasExport("gl4es_glIsEnablediEXT");
+
+// Uniform buffer objects
+typedef void (*glGetUniformBlockIndex_PTR) (GLuint program, const GLchar* name);
+void gl4es_glGetUniformBlockIndex(GLuint program, const GLchar* name)
+{
+    LOAD_GLES(glGetUniformBlockIndex);
+    gles_glGetUniformBlockIndex(program, name);
+}
+void glGetUniformBlockIndex(GLuint program, const GLchar* name) AliasExport("gl4es_glGetUniformBlockIndex");
+
+typedef void (*glGetUniformIndices_PTR) (GLuint program, GLsizei uniformCount, const GLchar* const* uniformNames, GLuint* uniformIndices);
+void gl4es_glGetUniformIndices(GLuint program, GLsizei uniformCount, const GLchar* const* uniformNames, GLuint* uniformIndices)
+{
+    LOAD_GLES(glGetUniformIndices);
+    gles_glGetUniformIndices(program, uniformCount, uniformNames, uniformIndices);
+}
+void glGetUniformIndices(GLuint program, GLsizei uniformCount, const GLchar* const* uniformNames, GLuint* uniformIndices) AliasExport("gl4es_glGetUniformIndices");
+
+typedef void (*glGetActiveUniformsiv_PTR) (GLuint program, GLsizei uniformCount, const GLuint* uniformIndices, GLenum pname, GLint* params);
+void gl4es_glGetActiveUniformsiv(GLuint program, GLsizei uniformCount, const GLuint* uniformIndices, GLenum pname, GLint* params)
+{
+    LOAD_GLES(glGetActiveUniformsiv);
+    gles_glGetActiveUniformsiv(program, uniformCount, uniformIndices, pname, params);
+}
+void glGetActiveUniformsiv(GLuint program, GLsizei uniformCount, const GLuint* uniformIndices, GLenum pname, GLint* params) AliasExport("gl4es_glGetActiveUniformsiv");
+
+typedef void (*glGetActiveUniformBlockiv_PTR) (GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint* params);
+void gl4es_glGetActiveUniformBlockiv(GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint* params)
+{
+    LOAD_GLES(glGetActiveUniformBlockiv);
+    gles_glGetActiveUniformBlockiv(program, uniformBlockIndex, pname, params);
+}
+void glGetActiveUniformBlockiv(GLuint program, GLuint uniformBlockIndex, GLenum pname, GLint* params) AliasExport("gl4es_glGetActiveUniformBlockiv");
+
+typedef void (*glGetActiveUniformBlockName_PTR) (GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei* length, GLchar* uniformBlockName);
+void gl4es_glGetActiveUniformBlockName(GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei* length, GLchar* uniformBlockName)
+{
+    LOAD_GLES(glGetActiveUniformBlockName);
+    gles_glGetActiveUniformBlockName(program, uniformBlockIndex, bufSize, length, uniformBlockName);
+}
+void glGetActiveUniformBlockName(GLuint program, GLuint uniformBlockIndex, GLsizei bufSize, GLsizei* length, GLchar* uniformBlockName) AliasExport("gl4es_glGetActiveUniformBlockName");
+
+typedef void (*glUniformBlockBinding_PTR) (GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding);
+void gl4es_glUniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding)
+{
+    LOAD_GLES(glUniformBlockBinding);
+    return gles_glUniformBlockBinding(program, uniformBlockIndex, uniformBlockBinding);
+}
+void glUniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding) AliasExport("gl4es_glUniformBlockBinding");
+
+
 
 
 

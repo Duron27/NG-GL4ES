@@ -113,6 +113,9 @@ glbuffer_t** BUFF(GLenum target) {
         case GL_COPY_WRITE_BUFFER:
             return &glstate->vao->write;
             break;
+        case GL_UNIFORM_BUFFER:
+            return &glstate->vao->uniform;
+            break;
         default:
         LOGD("Warning, unknown buffer target 0x%04X\n", target);
     }
@@ -159,6 +162,8 @@ int buffer_target(GLenum target) {
     if (target==GL_COPY_READ_BUFFER)
         return 1;
     if (target==GL_COPY_WRITE_BUFFER)
+        return 1;
+    if (target==GL_UNIFORM_BUFFER)
         return 1;
     return 0;
 }
@@ -361,7 +366,7 @@ void __attribute__((visibility("default"))) glBindBuffersBase(GLenum target, GLu
     noerrorShim();
 }
 
-
+typedef void (*glBindBufferRange_PTR) (GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size);
 void __attribute__((visibility("default"))) glBindBufferRange(GLenum target, GLuint index, GLuint buffer, GLintptr offset, GLsizeiptr size) {
     DBG(SHUT_LOGD("glBindBufferRange(%s, %u, %u, %ld, %ld)\n", PrintEnum(target), index, buffer, offset, size);)
         FLUSH_BEGINEND;
@@ -409,6 +414,14 @@ void __attribute__((visibility("default"))) glBindBufferRange(GLenum target, GLu
 
         // Bind the buffer with offset and size
         bind_buffer(target, buff);
+
+if(target == GL_UNIFORM_BUFFER)
+{
+LOAD_GLES(glBindBufferRange);
+gles_glBindBufferRange(target, index, buff->real_buffer, offset, size);
+return;
+}
+
     }
 
     noerrorShim();
@@ -474,8 +487,9 @@ void gl4es_glBufferData(GLenum target, GLsizeiptr size, const GLvoid* data, GLen
         VaoSharedClear(glstate->vao);
 
     int go_real = 0;
-    if ((target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER)
+    if (((target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER)
         && (usage == GL_STREAM_DRAW || usage == GL_STATIC_DRAW || usage == GL_DYNAMIC_DRAW) && globals4es.usevbo)
+        || target == GL_UNIFORM_BUFFER )
         go_real = 1;
 
     if (buff->real_buffer && !go_real) {
@@ -629,7 +643,7 @@ void gl4es_glBufferSubData(GLenum target, GLintptr offset, GLsizeiptr size, cons
         return;
     }
 
-    if ((target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER) && buff->real_buffer) {
+    if ((target == GL_ARRAY_BUFFER || target == GL_ELEMENT_ARRAY_BUFFER || target == GL_UNIFORM_BUFFER) && buff->real_buffer) {
         LOAD_GLES(glBufferSubData);
         LOAD_GLES(glBindBuffer);
         gles_glBindBuffer(target, buff->real_buffer);
@@ -695,6 +709,8 @@ void gl4es_glDeleteBuffers(GLsizei n, const GLuint* buffers) {
                             glstate->vao->pack = NULL;
                         if (glstate->vao->unpack == buff)
                             glstate->vao->unpack = NULL;
+                        if (glstate->vao->uniform == buff)
+                            glstate->vao->uniform = NULL;
                         for (int j = 0; j < hardext.maxvattrib; j++)
                             if (glstate->vao->vertexattrib[j].buffer == buff)
                                 glstate->vao->vertexattrib[j].buffer = NULL;

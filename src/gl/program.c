@@ -25,6 +25,7 @@ KHASH_MAP_IMPL_INT(attribloclist, attribloc_t *);
 KHASH_MAP_IMPL_INT(uniformlist, uniform_t *);
 KHASH_MAP_IMPL_INT(programlist, program_t *);
 
+/*
 GLuint __attribute__((visibility("default"))) glGetUniformBlockIndex(GLuint program, const GLchar* name) {
     CHECK_PROGRAM(GLuint, program);
 
@@ -315,7 +316,7 @@ void __attribute__((visibility("default"))) glUniformBlockBinding(GLuint program
 
     uniform->cache_offs = uniformBlockBinding;
 }
-
+*/
 
 void __attribute__((visibility("default"))) glBindFragDataLocation(GLuint program, GLuint colorNumber, const GLchar* name) {
     if (!program) {
@@ -382,16 +383,11 @@ void __attribute__((visibility("default"))) glBindFragDataLocation(GLuint progra
 
 void merge_uniforms(uniforms_declarations uniforms1, uniforms_declarations uniforms2) {
     int i = 0, j = 0;
-
-    // 找到第一个空的位置（即 initial_value == NULL）
     while (i < MAX_UNIFORM_VARIABLE_NUMBER && uniforms1[i].initial_value[0] != '\0') {
-        i++;  // 跳过已初始化的元素
+        i++;
     }
-
-    // 从第一个空的位置开始，将 uniforms_declarations2 中的数据复制过去
     while (i < MAX_UNIFORM_VARIABLE_NUMBER && j < MAX_UNIFORM_VARIABLE_NUMBER) {
-        // 复制 uniforms_declarations2 中的元素到 uniforms_declarations1 中
-        if (uniforms2[j].initial_value[0] != '\0') {  // 只复制非空的元素
+        if (uniforms2[j].initial_value[0] != '\0') {
             strncpy(uniforms1[i].variable, uniforms2[j].variable, MAX_VARIABLE_LENGTH);
             strncpy(uniforms1[i].initial_value, uniforms2[j].initial_value, MAX_INITIAL_VALUE_LENGTH);
             i++;
@@ -785,6 +781,7 @@ void gl4es_glGetProgramiv(GLuint program, GLenum pname, GLint *params) {
             } else
                 *params = 0;
             break;
+/*
         case GL_ACTIVE_UNIFORMS:
             *params = (glprogram->uniform)?glprogram->num_uniform:0;
             break;
@@ -799,6 +796,7 @@ void gl4es_glGetProgramiv(GLuint program, GLenum pname, GLint *params) {
                 *params = l;
             }
             break;
+*/
         case GL_PROGRAM_BINARY_LENGTH:
             // TODO: check if extension is present
             if(gles_glGetProgramiv) {
@@ -820,6 +818,12 @@ void gl4es_glGetProgramiv(GLuint program, GLenum pname, GLint *params) {
 
 GLint gl4es_glGetUniformLocation(GLuint program, const GLchar *name) {
     //DBG(SHUT_LOGD("glGetUniformLocation(%d, %s)\n", program, name);)
+
+// FIXME: current implementation is broken, use native instead
+LOAD_GLES2(glGetUniformLocation);
+return gles_glGetUniformLocation(program, name);
+
+
     FLUSH_BEGINEND;
     CHECK_PROGRAM(GLint, program)
 
@@ -1135,6 +1139,25 @@ void gl4es_glLinkProgram(GLuint program) {
         gl4es_glShaderSource(vtx, 1, fpe_VertexShader(&needs, NULL), NULL);
         gl4es_glCompileShader(vtx);
         gl4es_glAttachShader(glprogram->id, vtx);
+    }
+    // now check if fragment shader is missing
+    int has_fragment = glprogram->last_frag?1:0;
+    // and create one if needed!
+    if(!has_fragment) {
+        glprogram->default_need = (shaderconv_need_t*)malloc(sizeof(shaderconv_need_t));
+        memcpy(glprogram->default_need, &needs, sizeof(shaderconv_need_t));
+        glprogram->default_fragment = 1;
+        GLenum frg = gl4es_glCreateShader(GL_FRAGMENT_SHADER);
+        gl4es_glShaderSource(frg, 1,
+"#version 120 es\n\
+\n\
+void main()\n\
+{\n\
+    gl_FragData[0] = vec4(0.0);\n\
+}\n\
+", NULL);
+        gl4es_glCompileShader(frg);
+        gl4es_glAttachShader(glprogram->id, frg);
     }
     int compatible = 1;
     // now is everyone ok?

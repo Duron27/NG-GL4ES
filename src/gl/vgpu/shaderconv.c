@@ -331,10 +331,17 @@ precision lowp sampler2DShadow;\n\
 #define textureSize2D textureSize\n\
 ");
 
+
+        // Remove "#extension GL_ARB_uniform_buffer_object : require" from lightmanager query shader
+        source = InplaceReplaceSimple(source, &sourceLength, "#extension GL_ARB_uniform_buffer_object : require", "");
+
         shader_source->converted = source;
 
         // Process uniform declarations
-        shader_source->converted = process_uniform_declarations(shader_source->converted, shader_source->uniforms_declarations, &shader_source->uniforms_declarations_count);
+ //       shader_source->converted = process_uniform_declarations(shader_source->converted, shader_source->uniforms_declarations, &shader_source->uniforms_declarations_count);
+
+        // fix legacy lighting
+  //      shader_source->converted = InplaceReplaceSimple(shader_source->converted, &sourceLength, "uniform _gl4es_LightSource[","uniform _gl4es_LightSourceParameters _gl4es_LightSource[");
 
         return shader_source->converted;
 
