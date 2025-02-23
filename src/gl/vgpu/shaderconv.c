@@ -320,7 +320,7 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
 #extension GL_EXT_gpu_shader5 : enable\n\
 #extension GL_EXT_shader_implicit_conversions : enable\n\
 precision highp float;\n\
-precision mediump int;\n\
+precision highp int;\n\
 precision lowp sampler2D;\n\
 precision lowp sampler2DShadow;\n\
 #define sample sample2\n\
@@ -333,7 +333,7 @@ precision lowp sampler2DShadow;\n\
 
 
         // Remove "#extension GL_ARB_uniform_buffer_object : require" from lightmanager query shader
-        source = InplaceReplaceSimple(source, &sourceLength, "#extension GL_ARB_uniform_buffer_object : require", "");
+ //       source = InplaceReplaceSimple(source, &sourceLength, "#extension GL_ARB_uniform_buffer_object : require", "");
 
         shader_source->converted = source;
 
