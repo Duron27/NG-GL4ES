@@ -1419,11 +1419,11 @@ void gl4es_glBlitFramebuffer(GLint srcX0, GLint srcY0, GLint srcX1, GLint srcY1,
     // filter will be taken only for ReadFBO has no Texture attached (so readpixel is used)
     DBG(SHUT_LOGD("glBlitFramebuffer(%d, %d, %d, %d,  %d, %d, %d, %d,  0x%04X, %s) fbo_read=%d, fbo_draw=%d\n",
         srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, PrintEnum(filter), glstate->fbo.fbo_read->id, glstate->fbo.fbo_draw->id);)
-
+/*
     LOAD_GLES2(glBlitFramebuffer);
     gles_glBlitFramebuffer(srcX0, srcY0, srcX1, srcY1, dstX0, dstY0, dstX1, dstY1, mask, filter);
     return;
-
+*/
     GLint viewport[4];
     gl4es_glGetIntegerv(GL_VIEWPORT, viewport);
     GLint width = viewport[2];

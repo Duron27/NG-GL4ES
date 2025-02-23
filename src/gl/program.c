@@ -1140,25 +1140,6 @@ void gl4es_glLinkProgram(GLuint program) {
         gl4es_glCompileShader(vtx);
         gl4es_glAttachShader(glprogram->id, vtx);
     }
-    // now check if fragment shader is missing
-    int has_fragment = glprogram->last_frag?1:0;
-    // and create one if needed!
-    if(!has_fragment) {
-        glprogram->default_need = (shaderconv_need_t*)malloc(sizeof(shaderconv_need_t));
-        memcpy(glprogram->default_need, &needs, sizeof(shaderconv_need_t));
-        glprogram->default_fragment = 1;
-        GLenum frg = gl4es_glCreateShader(GL_FRAGMENT_SHADER);
-        gl4es_glShaderSource(frg, 1,
-"#version 120 es\n\
-\n\
-void main()\n\
-{\n\
-    gl_FragData[0] = vec4(0.0);\n\
-}\n\
-", NULL);
-        gl4es_glCompileShader(frg);
-        gl4es_glAttachShader(glprogram->id, frg);
-    }
     int compatible = 1;
     // now is everyone ok?
     for (int i=0; i<glprogram->attach_size && compatible; i++) {
