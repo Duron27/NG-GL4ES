@@ -320,7 +320,7 @@ void gl4es_glGetQueryObjectui64v(GLuint id, GLenum pname, GLuint64 * params)
 }
 
 
-
+/*
 //Direct wrapper
 AliasExportN(void,glGenQueries,,(GLsizei n, GLuint * ids));
 AliasExportN(GLboolean,glIsQuery,,(GLuint id));
@@ -344,3 +344,4 @@ AliasExportN(void,glGetQueryiv,ARB,(GLenum target, GLenum pname, GLint* params))
 AliasExportN(void,glGetQueryObjectiv,ARB,(GLuint id, GLenum pname, GLint* params));
 AliasExportN(void,glGetQueryObjectuiv,ARB,(GLuint id, GLenum pname, GLuint* params));
 AliasExportN(void,glQueryCounter,ARB,(GLuint id, GLenum target));
+*/

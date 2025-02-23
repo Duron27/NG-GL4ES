@@ -145,7 +145,64 @@ void gl4es_glUniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuin
 void glUniformBlockBinding(GLuint program, GLuint uniformBlockIndex, GLuint uniformBlockBinding) AliasExport("gl4es_glUniformBlockBinding");
 
 
+// disjoint_timer_query
+typedef void (*glGenQueriesEXT_PTR) (GLsizei n, GLuint *ids);
+typedef void (*glDeleteQueriesEXT_PTR) (GLsizei n, const GLuint *ids);
+typedef GLboolean (*glIsQueryEXT_PTR) (GLuint id);
+typedef void (*glBeginQueryEXT_PTR) (GLenum target, GLuint id);
+typedef void (*GL_APIENTRY glEndQueryEXT_PTR) (GLenum target);
+typedef void (*GL_APIENTRY glGetQueryivEXT_PTR) (GLenum target, GLenum pname, GLint *params);
+typedef void (*GL_APIENTRY glGetQueryObjectuivEXT_PTR) (GLuint id, GLenum pname, GLuint *params);
+//typedef void (*GL_APIENTRY glGetInteger64vEXT_PTR) (GLenum pname, GLint64 *data);
 
+void gl4es_glGenQueriesEXT(GLsizei n, GLuint *ids)
+{
+    LOAD_GLES(glGenQueriesEXT);
+    gles_glGenQueriesEXT(n, ids);
+}
+void glGenQueriesEXT(GLsizei n, GLuint *ids) AliasExport("gl4es_glGenQueriesEXT");
+
+void gl4es_glDeleteQueriesEXT(GLsizei n, const GLuint *ids)
+{
+    LOAD_GLES(glDeleteQueriesEXT);
+    gles_glDeleteQueriesEXT(n, ids);
+}
+void glDeleteQueriesEXT(GLsizei n, const GLuint *ids) AliasExport("gl4es_glDeleteQueriesEXT");
+
+GLboolean gl4es_glIsQueryEXT(GLuint id)
+{
+    LOAD_GLES(glIsQueryEXT);
+    return gles_glIsQueryEXT(id);
+}
+GLboolean glIsQueryEXT(GLuint id) AliasExport("gl4es_glIsQueryEXT");
+
+void gl4es_glBeginQueryEXT(GLenum target, GLuint id)
+{
+    LOAD_GLES(glBeginQueryEXT);
+    gles_glBeginQueryEXT(target, id);
+}
+void glBeginQueryEXT(GLenum target, GLuint id) AliasExport("gl4es_glBeginQueryEXT");
+
+void gl4es_glEndQueryEXT(GLenum target)
+{
+    LOAD_GLES(glEndQueryEXT);
+    gles_glEndQueryEXT(target);
+}
+void glEndQueryEXT(GLenum target) AliasExport("gl4es_glEndQueryEXT");
+
+void gl4es_glGetQueryivEXT(GLenum target, GLenum pname, GLint *params)
+{	
+    LOAD_GLES(glGetQueryivEXT);
+    gles_glGetQueryivEXT(target, pname, params);
+}
+void glGetQueryivEXT(GLenum target, GLenum pname, GLint *params) AliasExport("gl4es_glGetQueryivEXT");
+
+void gl4es_glGetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params)
+{
+    LOAD_GLES(glGetQueryObjectuivEXT);
+    gles_glGetQueryObjectuivEXT(id, pname, params);
+}
+void glGetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params) AliasExport("gl4es_glGetQueryObjectuivEXT");
 
 
 
