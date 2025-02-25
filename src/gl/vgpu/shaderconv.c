@@ -327,6 +327,7 @@ precision lowp sampler2DShadow;\n\
 #define texture2D texture\n\
 #define texture3D texture\n\
 #define texture2DProj textureProj\n\
+#define texture2DLod textureLod\n\
 #define shadow2DProj textureProj\n\
 #define textureSize2D textureSize\n\
 ");

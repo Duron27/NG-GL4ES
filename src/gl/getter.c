@@ -164,22 +164,27 @@ void BuildExtensionsList() {
             strcat(glstate->extensions, "GL_ARB_depth_clamp ");
         }
 
+        if(hardext.timerquery) {
+            strcat(glstate->extensions, "GL_EXT_disjoint_timer_query ");
+        }
+
         // es3 core stuff?
             strcat(glstate->extensions, "GL_EXT_texture3D ");
             strcat(glstate->extensions, "GL_EXT_texture_rg ");
             strcat(glstate->extensions, "GL_ARB_color_buffer_float ");
             strcat(glstate->extensions, "GL_ARB_depth_buffer_float ");
             strcat(glstate->extensions, "GL_ARB_shadow ");
+            
             strcat(glstate->extensions, "GL_EXT_disjoint_timer_query ");
             strcat(glstate->extensions, "GL_ARB_occlusion_query ");
-            strcat(glstate->extensions, "GL_EXT_texture_array ");
-            strcat(glstate->extensions, "GL_OES_texture_npot ");
-            strcat(glstate->extensions, "GL_ARB_texture_swizzle ");
-            strcat(glstate->extensions, "GL_EXT_texture_integer ");
-            strcat(glstate->extensions, "GL_EXT_multisampled_render_to_texture ");
-            strcat(glstate->extensions, "GL_EXT_geometry_shader4 ");
-            strcat(glstate->extensions, "GL_ARB_pixel_buffer_object ");
-            strcat(glstate->extensions, "GL_ARB_texture_buffer_object ");
+            //strcat(glstate->extensions, "GL_EXT_texture_array ");
+            //strcat(glstate->extensions, "GL_OES_texture_npot ");
+            //strcat(glstate->extensions, "GL_ARB_texture_swizzle ");
+            //strcat(glstate->extensions, "GL_EXT_texture_integer ");
+            //strcat(glstate->extensions, "GL_EXT_multisampled_render_to_texture ");
+            //strcat(glstate->extensions, "GL_EXT_geometry_shader4 ");
+            //strcat(glstate->extensions, "GL_ARB_pixel_buffer_object ");
+            //strcat(glstate->extensions, "GL_ARB_texture_buffer_object ");
 
         if(!globals4es.notexrect)
             strcat(glstate->extensions, "GL_ARB_texture_rectangle ");

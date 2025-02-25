@@ -799,6 +799,7 @@ GLenum swizzle_internalformat(GLenum* internalformat, GLenum format, GLenum type
             case GL_UNSIGNED_INT:
                 sret = ret = GL_DEPTH24_STENCIL8;
                 break;
+            case GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
             case GL_FLOAT:
                 sret = ret = GL_DEPTH32F_STENCIL8;
                 break;
