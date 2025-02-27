@@ -624,6 +624,9 @@ GLenum swizzle_internalformat(GLenum* internalformat, GLenum format, GLenum type
         else
             sret = GL_RED;
         break;
+    case GL_R16F:
+        ret = sret = GL_R16F;
+        break;
     case GL_R32F:
         ret = sret = GL_R32F;
         break;
@@ -799,7 +802,7 @@ GLenum swizzle_internalformat(GLenum* internalformat, GLenum format, GLenum type
             case GL_UNSIGNED_INT:
                 sret = ret = GL_DEPTH24_STENCIL8;
                 break;
-            case GL_FLOAT_32_UNSIGNED_INT_24_8_REV;
+            case GL_FLOAT_32_UNSIGNED_INT_24_8_REV:
             case GL_FLOAT:
                 sret = ret = GL_DEPTH32F_STENCIL8;
                 break;
