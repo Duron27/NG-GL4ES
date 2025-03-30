@@ -175,7 +175,6 @@ void BuildExtensionsList() {
             strcat(glstate->extensions, "GL_ARB_depth_buffer_float ");
             strcat(glstate->extensions, "GL_ARB_shadow ");
             
-            strcat(glstate->extensions, "GL_EXT_disjoint_timer_query ");
             strcat(glstate->extensions, "GL_ARB_occlusion_query ");
             //strcat(glstate->extensions, "GL_EXT_texture_array ");
             //strcat(glstate->extensions, "GL_OES_texture_npot ");

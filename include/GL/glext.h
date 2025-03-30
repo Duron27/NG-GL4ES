@@ -418,7 +418,7 @@ extern "C" {
 #define GL_MAX_TEXTURE_IMAGE_UNITS        0x8872
 #define GL_FRAGMENT_SHADER                0x8B30
 #define GL_VERTEX_SHADER                  0x8B31
-#define GL_COMPUTE_SHADER                  	0x91b9
+#define GL_COMPUTE_SHADER                  	0x91B9
 #define GL_MAX_FRAGMENT_UNIFORM_COMPONENTS 0x8B49
 #define GL_MAX_VERTEX_UNIFORM_COMPONENTS  0x8B4A
 #define GL_MAX_VARYING_FLOATS             0x8B4B

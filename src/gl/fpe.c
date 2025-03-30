@@ -589,6 +589,7 @@ void fpe_SyncUniforms(uniformcache_t *cache, program_t* glprogram) {
                     GoUniformfv(glprogram, m->id, n_uniform(m->type), 1, (GLfloat*)((uintptr_t)cache->cache+m->parent_offs));
                     break;
                 case GL_SAMPLER_2D:
+                case GL_SAMPLER_2D_SHADOW:
                 case GL_SAMPLER_CUBE:
                 case GL_INT:
                 case GL_INT_VEC2:
@@ -854,11 +855,16 @@ void fpe_glDrawArraysInstanced(GLenum mode, GLint first, GLsizei count, GLsizei 
     }
     free_scratch(&scratch);
 }
+
+typedef void (*glDrawElementsInstanced_PTR)(GLenum mode, GLsizei count, GLenum type, const void *indices, GLsizei primcount);
 void fpe_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const GLvoid *indices, GLsizei primcount) {
     DBG(SHUT_LOGD("fpe_glDrawElementsInstanced(%s, %d, %s, %p, %d), program=%d\n", PrintEnum(mode), count, PrintEnum(type), indices, primcount, glstate->glsl->program);)
     LOAD_GLES2(glBindBuffer);
     LOAD_GLES(glDrawElements);
     LOAD_GLES2(glVertexAttrib4fv);
+
+    LOAD_GLES2(glDrawElementsInstanced);
+
     scratch_t scratch = {0};
     realize_glenv(mode==GL_POINTS, 0, count, type, indices, &scratch);
     program_t *glprogram = glstate->gleshard->glprogram;
@@ -871,6 +877,7 @@ void fpe_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const 
         inds = (void*)((uintptr_t)indices - (uintptr_t)(glstate->vao->elements->data));
     } else
         inds = (void*)indices;
+
     for (GLint id=0; id<primcount; ++id) {
         GoUniformiv(glprogram, glprogram->builtin_instanceID, 1, 1, &id);
         for(int i=0; i<hardext.maxvattrib; i++)
@@ -911,6 +918,7 @@ void fpe_glDrawElementsInstanced(GLenum mode, GLsizei count, GLenum type, const 
         }
         gles_glDrawElements(mode, count, type, inds);
     }
+
     free_scratch(&scratch);
     if(use_vbo) gles_glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 }

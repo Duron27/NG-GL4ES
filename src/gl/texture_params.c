@@ -272,8 +272,10 @@ void gl4es_glTexParameteri(GLenum target, GLenum pname, GLint param) {
     case GL_TEXTURE_WRAP_S:
     case GL_TEXTURE_WRAP_T:
         switch (param) {
-        case GL_CLAMP:
         case GL_CLAMP_TO_BORDER:
+            break;
+        case GL_CLAMP:
+   //     case GL_CLAMP_TO_BORDER:
             param = GL_CLAMP_TO_EDGE;
             break;
         case GL_REPEAT:
@@ -295,18 +297,22 @@ void gl4es_glTexParameteri(GLenum target, GLenum pname, GLint param) {
     case GL_TEXTURE_WRAP_R:
         // ignore it on GLES...
         return;
+    case GL_TEXTURE_COMPARE_FUNC:
+        texture->func = param;   // TODO, better traking...
+        break; //es3
     case GL_TEXTURE_COMPARE_MODE:
         texture->compare = param;   // TODO, better traking...
-        return;
+        break; //es3
     case GL_TEXTURE_MAX_LEVEL:
         if (texture)
             texture->max_level = param;
-        return;			// not on GLES
+        break; // es3
     case GL_TEXTURE_BASE_LEVEL:
         texture->base_level = param;
-        return;			// not on GLES
+        break; // es3
     case GL_TEXTURE_MIN_LOD:
     case GL_TEXTURE_MAX_LOD:
+        break; // es3
     case GL_TEXTURE_LOD_BIAS:
         return;			// not on GLES
     case GL_GENERATE_MIPMAP:
@@ -360,6 +366,7 @@ void gl4es_glTexParameterfv(GLenum target, GLenum pname, const GLfloat * params)
     case GL_TEXTURE_WRAP_T:
     case GL_TEXTURE_WRAP_R:
     case GL_TEXTURE_COMPARE_MODE:
+    case GL_TEXTURE_COMPARE_FUNC:
     case GL_TEXTURE_MAX_LEVEL:
     case GL_TEXTURE_BASE_LEVEL:
     case GL_TEXTURE_MIN_LOD:
@@ -369,11 +376,8 @@ void gl4es_glTexParameterfv(GLenum target, GLenum pname, const GLfloat * params)
     case GL_TEXTURE_MAX_ANISOTROPY:
         gl4es_glTexParameteri(target, pname, params[0]);
         return;
-    case GL_TEXTURE_BORDER_COLOR:
-        // not supported on GLES,
-        noerrorShim();
-        return;
     }
+
     PUSH_IF_COMPILING(glTexParameterfv);
     realize_bound(glstate->texture.active, target);
     LOAD_GLES(glTexParameterfv);
@@ -392,6 +396,7 @@ void gl4es_glTexParameteriv(GLenum target, GLenum pname, const GLint * params) {
     case GL_TEXTURE_WRAP_T:
     case GL_TEXTURE_WRAP_R:
     case GL_TEXTURE_COMPARE_MODE:
+    case GL_TEXTURE_COMPARE_FUNC:
     case GL_TEXTURE_MAX_LEVEL:
     case GL_TEXTURE_BASE_LEVEL:
     case GL_TEXTURE_MIN_LOD:
@@ -399,11 +404,8 @@ void gl4es_glTexParameteriv(GLenum target, GLenum pname, const GLint * params) {
     case GL_TEXTURE_LOD_BIAS:
     case GL_GENERATE_MIPMAP:
     case GL_TEXTURE_MAX_ANISOTROPY:
-        gl4es_glTexParameteri(target, pname, params[0]);
-        return;
     case GL_TEXTURE_BORDER_COLOR:
-        // not supported on GLES,
-        noerrorShim();
+        gl4es_glTexParameteri(target, pname, params[0]);
         return;
     }
     PUSH_IF_COMPILING(glTexParameteriv);
@@ -657,6 +659,9 @@ void gl4es_glGetTexLevelParameteriv(GLenum target, GLint level, GLenum pname, GL
             break;
         case GL_TEXTURE_MAG_FILTER:
             *params = bound->wanted_mag;
+            break;
+        case GL_TEXTURE_COMPARE_FUNC:
+                (*params) = bound->func;
             break;
         case GL_TEXTURE_COMPARE_MODE:
                 (*params) = bound->compare;  // GL_NONE is 0x0

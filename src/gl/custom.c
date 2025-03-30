@@ -196,6 +196,11 @@ void gl4es_glGetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params)
 }
 void glGetQueryObjectuivEXT(GLuint id, GLenum pname, GLuint *params) AliasExport("gl4es_glGetQueryObjectuivEXT");
 
-
-
+/*
+void gl4es_glPolygonOffset(GLfloat factor, GLfloat units) {
+    LOAD_GLES(glPolygonOffset);
+    gles_glPolygonOffset(factor, units);
+}
+void glPolygonOffset(GLfloat factor, GLfloat units) AliasExport("gl4es_glPolygonOffset");
+*/
 

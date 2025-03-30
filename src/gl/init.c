@@ -114,6 +114,10 @@ void initialize_gl4es() {
     	  break;
     }
 
+  //  env(LIBGL_INSTANCING, globals4es.instancing, "using hw instancing");
+    globals4es.instancing = ReturnEnvVarInt("LIBGL_INSTANCING");
+    globals4es.dxtmipmap = ReturnEnvVarInt("LIBGL_DXTMIPMAP");
+
     switch(ReturnEnvVarInt("LIBGL_FB")) {
     	case 1:
         SHUT_LOGD("framebuffer output enabled\n");

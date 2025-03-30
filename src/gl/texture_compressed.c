@@ -348,7 +348,7 @@ void gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLenum internalfor
         bound->compressed = 1;
         bound->internalformat = internalformat;
         bound->valid = 1;
-        if(generateMipmaps) {
+        if(generateMipmaps && globals4es.dxtmipmap) {
             // not automipmap yet? then set it...
             bound->mipmap_need = 1;
             // and upload higher level here...
@@ -371,6 +371,7 @@ void gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLenum internalfor
                 if(out!=ndata)
                     free(out);
             }
+
             bound->mipmap_auto = 1;
         }
 
@@ -397,7 +398,9 @@ void gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLenum internalfor
         if (glstate->fpe_state && glstate->fpe_bound_changed < glstate->texture.active+1)
             glstate->fpe_bound_changed = glstate->texture.active+1;
         gles_glCompressedTexImage2D(rtarget, level, internalformat, width, height, border, imageSize, datab);
-        if (generateMipmaps) {
+        if (generateMipmaps && globals4es.dxtmipmap) {
+            // not automipmap yet? then set it...
+            bound->mipmap_need = 1;
             int simpleAlpha = 0;
             int complexAlpha = 0;
             int transparent0 = (internalformat==GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || internalformat==GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT)?1:0;
@@ -439,7 +442,10 @@ void gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLenum internalfor
                 if (compressedpixels) free(compressedpixels);
             }
             if (pixels) free(pixels);
+
+            bound->mipmap_auto = 1;
         }
+
         if (oldalign!=1) 
             gl4es_glPixelStorei(GL_UNPACK_ALIGNMENT, oldalign);
         errorGL();

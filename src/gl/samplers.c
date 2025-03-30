@@ -191,6 +191,7 @@ int samplerParameterfv(glsampler_t* sampler, GLenum pname, const GLfloat *params
                 case GL_MIRRORED_REPEAT_OES:
                     break;
                 default:
+                    LOGE("invalid wrap mode %s\n", PrintEnum(params[0]));
                     errorShim(GL_INVALID_ENUM);
                     return 1;
             }
@@ -201,9 +202,11 @@ int samplerParameterfv(glsampler_t* sampler, GLenum pname, const GLfloat *params
         case GL_TEXTURE_COMPARE_MODE:
             switch(param) {
                 case GL_COMPARE_REF_TO_TEXTURE:
+SHUT_LOGD("GL_TEXTURE_COMPARE_MODE =  GL_COMPARE_REF_TO_TEXTURE\n");
                 case GL_NONE:
                     break;
                 default:
+                    LOGE("invalid GL_TEXTURE_COMPARE_MODE %s\n", PrintEnum(params[0]));
                     errorShim(GL_INVALID_ENUM);
                     return 1;
             }
@@ -221,6 +224,7 @@ int samplerParameterfv(glsampler_t* sampler, GLenum pname, const GLfloat *params
                 case GL_NEVER:
                     break;
                 default:
+                    LOGE("invalid GL_TEXTURE_COMPARE_FUNC %s\n", PrintEnum(params[0]));
                     errorShim(GL_INVALID_ENUM);
                     return 1;
             }
@@ -284,9 +288,9 @@ void gl4es_glSamplerParameterf(GLuint sampler, GLenum pname, GLfloat param)
         errorShim(GL_INVALID_VALUE);
         return;
     }
-    if(pname==GL_TEXTURE_BORDER_COLOR)
+/*    if(pname==GL_TEXTURE_BORDER_COLOR)
         errorShim(GL_INVALID_ENUM);
-    else if(!samplerParameterfv(s, pname, &param))
+    else */if(!samplerParameterfv(s, pname, &param))
         errorShim(GL_INVALID_ENUM);
 }
 void gl4es_glSamplerParameteri(GLuint sampler, GLenum pname, GLint param)
@@ -297,9 +301,9 @@ void gl4es_glSamplerParameteri(GLuint sampler, GLenum pname, GLint param)
         return;
     }
     GLfloat fparam = param;
-    if(pname==GL_TEXTURE_BORDER_COLOR)
+/*    if(pname==GL_TEXTURE_BORDER_COLOR)
         errorShim(GL_INVALID_ENUM);
-    else if(!samplerParameterfv(s, pname, &fparam))
+    else */if(!samplerParameterfv(s, pname, &fparam))
         errorShim(GL_INVALID_ENUM);
 }
 void gl4es_glSamplerParameterfv(GLuint sampler, GLenum pname, GLfloat *params)

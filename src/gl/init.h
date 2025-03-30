@@ -10,7 +10,6 @@ typedef struct _globals4es {
     int mergelist;
     int xrefresh;
     int stacktrace;
-    int dxt;
     int usefb;
     int usegbm;
     int usefbo;
@@ -84,6 +83,9 @@ typedef struct _globals4es {
     int skiptexcopies;
     float fbtexscale;
     uint esversion;
+    int dxt;
+    int dxtmipmap;
+    int instancing;
 } globals4es_t;
 
 extern globals4es_t globals4es;

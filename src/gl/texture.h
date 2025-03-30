@@ -143,6 +143,7 @@ typedef struct {
     GLenum wanted_mag;
     GLenum wrap_s;
     GLenum wrap_t;
+    GLenum func;
     GLenum compare;
     GLboolean alpha;
     GLboolean compressed;
@@ -255,6 +256,7 @@ int minmag_npot(GLenum mag);
 GLenum minmag_forcenpot(GLenum filt);
 GLenum minmag_float(GLenum filt);
 GLboolean isDXTc(GLenum format);
+GLboolean isFormatSupported(GLenum format);
 
 void realize_bound(int TMU, GLenum target);
 void realize_textures(int drawing);

@@ -512,7 +512,7 @@ char* ConvertShader(const char* pEntry, int isVertex, shaderconv_need_t *need, i
     memmove(Tmp, newptr, strlen(newptr)+1);
     Tmp = InplaceInsert(Tmp, GLESFullHeader, Tmp, &tmpsize);
   }
-  int headline = 3;
+  int headline = 1;
 
 /*
   int texture3D = (strstr(pBuffer, "texture3D")) ? 1 : 0;
