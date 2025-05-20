@@ -217,11 +217,14 @@ else()
         set_target_properties(GL PROPERTIES SUFFIX ".so.1")
     endif()
     install(TARGETS GL
-    LIBRARY
-      DESTINATION "/usr/lib/gl4es/"
+      LIBRARY
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/"
     )
-  install(FILES "../include/gl4esinit.h" "../include/gl4eshint.h"
-    DESTINATION "/usr/include/gl4es/"
+    install(DIRECTORY "../include/"
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/include/gl4es"      
+    )
+    install(DIRECTORY "../include/"
+      DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
     )
   endif()
 
