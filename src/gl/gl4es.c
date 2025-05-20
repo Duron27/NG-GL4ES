@@ -42,7 +42,7 @@ void trim(char* str) {
 }
 
 void write_log(const char* format, ...) {
-    const char* file_path = "/sdcard/omw_nightly/config/ng_gl4es_log.txt";
+    const char* file_path = "/sdcard/Alpha3/config/ng_gl4es_log.txt";
     FILE* file = fopen(file_path, "a");
     if (file == NULL) {
         fprintf(stderr, "Error opening file '%s': %s\n", file_path, strerror(errno));
