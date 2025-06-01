@@ -313,6 +313,34 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
 
         source = BackportConstArrays(source, &sourceLength);
 
+        // SHADRHACKS: better to change in source shaders directly
+        // Rafael VAIO
+        source = InplaceReplaceSimple(source, &sourceLength, "#define saturate(x) clamp(x, 0, 1)", "#define saturate(x) clamp(x, 0.0, 1.0)");
+        // Rafael wetworld, hbao, const float not handled by GL_EXT_shader_implicit_conversions
+        source = InplaceReplaceSimple(source, &sourceLength, "const float", "float");
+        // Rafael SMAA, missing defines
+        source = InplaceReplaceSimple(source, &sourceLength, "#define SMAA_CORNER_ROUNDING 25", "#define SMAA_CORNER_ROUNDING 25\n    #define SMAA_REPROJECTION 0\n #define FXAA_DISCARD 0\n");
+        // Wareya BadSSIL, float array
+        source = InplaceReplaceSimple(source, &sourceLength, "float eles[5] = {a_v, b_v, c_v, d_v, e_v};", "float eles[5] = float[](a_v, b_v, c_v, d_v, e_v);");
+        // Wareya ssr water, build in function override
+        source = InplaceReplaceSimple(source, &sourceLength, "float smoothstep(float x)", "#define smoothstep smoothstep2\n    float smoothstep(float x)");
+
+        // build in overrides workaround
+        source = InplaceReplaceSimple(source, &sourceLength, "pow (", "pow(");
+        source = InplaceReplaceSimple(source, &sourceLength, "pow(", "vgpu_pow(");
+
+        source = InplaceReplaceSimple(source, &sourceLength, "mod (", "mod(");
+        source = InplaceReplaceSimple(source, &sourceLength, "mod(", "vgpu_mod(");
+
+        source = InplaceReplaceSimple(source, &sourceLength, "mix (", "mix(");
+        source = InplaceReplaceSimple(source, &sourceLength, "mix(", "vgpu_mix(");
+
+        source = InplaceReplaceSimple(source, &sourceLength, "min (", "min(");
+        source = InplaceReplaceSimple(source, &sourceLength, "min(", "vgpu_min(");
+
+        source = InplaceReplaceSimple(source, &sourceLength, "max (", "max(");
+        source = InplaceReplaceSimple(source, &sourceLength, "max(", "vgpu_max(");
+
         source = InplaceReplaceSimple(source, &sourceLength, "#version 120",
 "#version 320 es\n\
 #extension GL_EXT_shader_non_constant_global_initializers : enable\n\
@@ -330,6 +358,54 @@ precision lowp sampler2DShadow;\n\
 #define texture2DLod textureLod\n\
 #define shadow2DProj textureProj\n\
 #define textureSize2D textureSize\n\
+#define exp2(x) exp2(float(x))\n\
+float vgpu_pow(float x, float y) { return pow(x, y); }\n\
+float vgpu_pow(float x, int y) { return pow(x, float(y)); }\n\
+float vgpu_pow(int x, float y) { return pow(float(x), y); }\n\
+float vgpu_pow(int x, int y) { return pow(float(x), float(y)); }\n\
+vec2 vgpu_pow(vec2 x, vec2 y) { return pow(x, y); }\n\
+vec3 vgpu_pow(vec3 x, vec3 y) { return pow(x, y); }\n\
+vec4 vgpu_pow(vec4 x, vec4 y) { return pow(x, y); }\n\
+float vgpu_mod(float x, float y) { return mod(x, y); }\n\
+float vgpu_mod(float x, int y) { return mod(x, float(y)); }\n\
+float vgpu_mod(int x, float y) { return mod(float(x), y); }\n\
+float vgpu_mod(int x, int y) { return mod(float(x), float(y)); }\n\
+vec2 vgpu_mod(vec2 x, float y) { return mod(x, y); }\n\
+vec3 vgpu_mod(vec3 x, float y) { return mod(x, y); }\n\
+vec4 vgpu_mod(vec4 x, float y) { return mod(x, y); }\n\
+vec2 vgpu_mod(vec2 x, vec2 y) { return mod(x, y); }\n\
+vec3 vgpu_mod(vec3 x, vec3 y) { return mod(x, y); }\n\
+vec4 vgpu_mod(vec4 x, vec4 y) { return mod(x, y); }\n\
+float vgpu_mix(float x, float y, float a) { return mix(x, y, a); }\n\
+float vgpu_mix(int x, float y, float a) { return mix(float(x), y, a); }\n\
+float vgpu_mix(float x, int y, float a) { return mix(x, float(y), a); }\n\
+float vgpu_mix(int x, int y, float a) { return mix(float(x), float(y), a); }\n\
+vec2 vgpu_mix(vec2 x, vec2 y, float a) { return mix(x, y, a); }\n\
+vec3 vgpu_mix(vec3 x, vec3 y, float a) { return mix(x, y, a); }\n\
+vec4 vgpu_mix(vec4 x, vec4 y, float a) { return mix(x, y, a); }\n\
+vec2 vgpu_mix(vec2 x, vec2 y, vec2 a) { return mix(x, y, a); }\n\
+vec3 vgpu_mix(vec3 x, vec3 y, vec3 a) { return mix(x, y, a); }\n\
+vec4 vgpu_mix(vec4 x, vec4 y, vec4 a) { return mix(x, y, a); }\n\
+int vgpu_min(int x, int y) { return min(x, y); }\n\
+float vgpu_min(float x, float y) { return min(x, y); }\n\
+float vgpu_min(int x, float y) { return min(float(x), y); }\n\
+float vgpu_min(float x, int y) { return min(x, float(y)); }\n\
+vec2 vgpu_min(vec2 x, vec2 y) { return min(x, y); }\n\
+vec2 vgpu_min(vec2 x, float y) { return min(x, y); }\n\
+vec3 vgpu_min(vec3 x, vec3 y) { return min(x, y); }\n\
+vec3 vgpu_min(vec3 x, float y) { return min(x, y); }\n\
+vec4 vgpu_min(vec4 x, vec4 y) { return min(x, y); }\n\
+vec4 vgpu_min(vec4 x, float y) { return min(x, y); }\n\
+int vgpu_max(int x, int y) { return max(x, y); }\n\
+float vgpu_max(float x, float y) { return max(x, y); }\n\
+float vgpu_max(int x, float y) { return max(float(x), y); }\n\
+float vgpu_max(float x, int y) { return max(x, float(y)); }\n\
+vec2 vgpu_max(vec2 x, vec2 y) { return max(x, y); }\n\
+vec2 vgpu_max(vec2 x, float y) { return max(x, y); }\n\
+vec3 vgpu_max(vec3 x, vec3 y) { return max(x, y); }\n\
+vec3 vgpu_max(vec3 x, float y) { return max(x, y); }\n\
+vec4 vgpu_max(vec4 x, vec4 y) { return max(x, y); }\n\
+vec4 vgpu_max(vec4 x, float y) { return max(x, y); }\n\
 ");
 
 
