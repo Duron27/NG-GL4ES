@@ -359,13 +359,13 @@ precision lowp sampler2DShadow;\n\
 #define shadow2DProj textureProj\n\
 #define textureSize2D textureSize\n\
 #define exp2(x) exp2(float(x))\n\
-float vgpu_pow(float x, float y) { return pow(x, y); }\n\
-float vgpu_pow(float x, int y) { return pow(x, float(y)); }\n\
-float vgpu_pow(int x, float y) { return pow(float(x), y); }\n\
-float vgpu_pow(int x, int y) { return pow(float(x), float(y)); }\n\
-vec2 vgpu_pow(vec2 x, vec2 y) { return pow(x, y); }\n\
-vec3 vgpu_pow(vec3 x, vec3 y) { return pow(x, y); }\n\
-vec4 vgpu_pow(vec4 x, vec4 y) { return pow(x, y); }\n\
+float vgpu_pow(float x, float y) { return pow(abs(x), y); }\n\
+float vgpu_pow(float x, int y) { return pow(abs(x), float(y)); }\n\
+float vgpu_pow(int x, float y) { return pow(abs(float(x)), y); }\n\
+float vgpu_pow(int x, int y) { return pow(abs(float(x)), float(y)); }\n\
+vec2 vgpu_pow(vec2 x, vec2 y) { return pow(abs(x), y); }\n\
+vec3 vgpu_pow(vec3 x, vec3 y) { return pow(abs(x), y); }\n\
+vec4 vgpu_pow(vec4 x, vec4 y) { return pow(abs(x), y); }\n\
 float vgpu_mod(float x, float y) { return mod(x, y); }\n\
 float vgpu_mod(float x, int y) { return mod(x, float(y)); }\n\
 float vgpu_mod(int x, float y) { return mod(float(x), y); }\n\

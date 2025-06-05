@@ -936,6 +936,16 @@ void gl4es_glTexImage2D(GLenum target, GLint level, GLint internalformat,
     if(data==NULL)
         internal2format_type(internalformat, &format, &type);
 
+    // FIXME: use just half_float for now
+    if (internalformat == GL_RGBA32F && type == GL_FLOAT) {
+        internalformat = GL_RGBA16F;
+        type = GL_HALF_FLOAT_OES;
+    }
+    if (internalformat == GL_RGB32F && type == GL_FLOAT) {
+        internalformat = GL_RGB16F;
+        type = GL_HALF_FLOAT_OES;
+    }
+
     // proxy case
     const GLuint itarget = what_target(target);
     const GLuint rtarget = map_tex_target(target);
