@@ -312,6 +312,7 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
         }
 
         source = BackportConstArrays(source, &sourceLength);
+  //      source = ReplaceModOperator(source, &sourceLength);
 
         // SHADRHACKS: better to change in source shaders directly
         // Rafael VAIO
@@ -322,8 +323,9 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
         source = InplaceReplaceSimple(source, &sourceLength, "#define SMAA_CORNER_ROUNDING 25", "#define SMAA_CORNER_ROUNDING 25\n    #define SMAA_REPROJECTION 0\n #define FXAA_DISCARD 0\n");
         // Wareya BadSSIL, float array
         source = InplaceReplaceSimple(source, &sourceLength, "float eles[5] = {a_v, b_v, c_v, d_v, e_v};", "float eles[5] = float[](a_v, b_v, c_v, d_v, e_v);");
-        // Wareya ssr water, build in function override
-        source = InplaceReplaceSimple(source, &sourceLength, "float smoothstep(float x)", "#define smoothstep smoothstep2\n    float smoothstep(float x)");
+        // Wazabear EdgeAA float<->bool conversion
+        source = InplaceReplaceSimple(source, &sourceLength, "if (edge.r)", "if (edge.r != 0.0)");
+        source = InplaceReplaceSimple(source, &sourceLength, "if (edge.g)", "if (edge.g != 0.0)");
 
         // build in overrides workaround
         source = InplaceReplaceSimple(source, &sourceLength, "pow (", "pow(");
@@ -340,6 +342,15 @@ char * ConvertShaderConditionally(struct shader_s * shader_source){
 
         source = InplaceReplaceSimple(source, &sourceLength, "max (", "max(");
         source = InplaceReplaceSimple(source, &sourceLength, "max(", "vgpu_max(");
+
+        source = InplaceReplaceSimple(source, &sourceLength, "smoothstep (", "smoothstep(");
+        source = InplaceReplaceSimple(source, &sourceLength, "smoothstep(", "smoothstep_vgpu(");
+
+        source = InplaceReplaceSimple(source, &sourceLength, "step (", "step(");
+        source = InplaceReplaceSimple(source, &sourceLength, "step(", "vgpu_step(");
+
+        source = InplaceReplaceSimple(source, &sourceLength, "exp2 (", "exp2(");
+        source = InplaceReplaceSimple(source, &sourceLength, "exp2(", "vgpu_exp2(");
 
         source = InplaceReplaceSimple(source, &sourceLength, "#version 120",
 "#version 320 es\n\
@@ -358,7 +369,6 @@ precision lowp sampler2DShadow;\n\
 #define texture2DLod textureLod\n\
 #define shadow2DProj textureProj\n\
 #define textureSize2D textureSize\n\
-#define exp2(x) exp2(float(x))\n\
 float vgpu_pow(float x, float y) { return pow(abs(x), y); }\n\
 float vgpu_pow(float x, int y) { return pow(abs(x), float(y)); }\n\
 float vgpu_pow(int x, float y) { return pow(abs(float(x)), y); }\n\
@@ -406,7 +416,30 @@ vec3 vgpu_max(vec3 x, vec3 y) { return max(x, y); }\n\
 vec3 vgpu_max(vec3 x, float y) { return max(x, y); }\n\
 vec4 vgpu_max(vec4 x, vec4 y) { return max(x, y); }\n\
 vec4 vgpu_max(vec4 x, float y) { return max(x, y); }\n\
+float smoothstep_vgpu(float x, float y, float a) { return smoothstep(x, y, a); }\n\
+float smoothstep_vgpu(int x, float y, float a) { return smoothstep(float(x), y, a); }\n\
+float smoothstep_vgpu(float x, int y, float a) { return smoothstep(x, float(y), a); }\n\
+float smoothstep_vgpu(int x, int y, float a) { return smoothstep(float(x), float(y), a); }\n\
+vec2 smoothstep_vgpu(float x, float y, vec2 a) { return smoothstep(x, y, a); }\n\
+vec2 smoothstep_vgpu(int x, float y, vec2 a) { return smoothstep(float(x), y, a); }\n\
+vec2 smoothstep_vgpu(float x, int y, vec2 a) { return smoothstep(x, float(y), a); }\n\
+vec2 smoothstep_vgpu(int x, int y, vec2 a) { return smoothstep(float(x), float(y), a); }\n\
+vec3 smoothstep_vgpu(float x, float y, vec3 a) { return smoothstep(x, y, a); }\n\
+vec3 smoothstep_vgpu(int x, float y, vec3 a) { return smoothstep(float(x), y, a); }\n\
+vec3 smoothstep_vgpu(float x, int y, vec3 a) { return smoothstep(x, float(y), a); }\n\
+vec3 smoothstep_vgpu(int x, int y, vec3 a) { return smoothstep(float(x), float(y), a); }\n\
+vec4 smoothstep_vgpu(float x, float y, vec4 a) { return smoothstep(x, y, a); }\n\
+vec4 smoothstep_vgpu(int x, float y, vec4 a) { return smoothstep(float(x), y, a); }\n\
+vec4 smoothstep_vgpu(float x, int y, vec4 a) { return smoothstep(x, float(y), a); }\n\
+vec4 smoothstep_vgpu(int x, int y, vec4 a) { return smoothstep(float(x), float(y), a); }\n\
+float vgpu_step(float x, float y) { return step(x, y); }\n\
+float vgpu_step(int x, float y) { return step(float(x), y); }\n\
+float vgpu_step(float x, int y) { return step(x, float(y)); }\n\
+float vgpu_step(int x, int y) { return step(float(x), float(y)); }\n\
+float vgpu_exp2(float x) { return exp2(x)); }\n\
+float vgpu_exp2(int x) { return exp2(float(x))); }\n\ 
 ");
+
 
 
         // Remove "#extension GL_ARB_uniform_buffer_object : require" from lightmanager query shader
