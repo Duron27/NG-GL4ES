@@ -438,10 +438,13 @@ float vgpu_step(float x, int y) { return step(x, float(y)); }\n\
 float vgpu_step(int x, int y) { return step(float(x), float(y)); }\n\
 vec2 vgpu_step(float x, vec2 y) { return step(x, y); }\n\
 vec2 vgpu_step(int x, vec2 y) { return step(float(x), y); }\n\
+vec2 vgpu_step(vec2 x, vec2 y) { return step(x, y); }\n\
 vec3 vgpu_step(float x, vec3 y) { return step(x, y); }\n\
 vec3 vgpu_step(int x, vec3 y) { return step(float(x), y); }\n\
+vec3 vgpu_step(vec3 x, vec3 y) { return step(x, y); }\n\
 vec4 vgpu_step(float x, vec2 y) { return step(x, y); }\n\
 vec4 vgpu_step(int x, vec4 y) { return step(float(x), y); }\n\
+vec4 vgpu_step(vec4 x, vec4 y) { return step(x, y); }\n\
 float vgpu_exp2(float x) { return exp2(x); }\n\
 float vgpu_exp2(int x) { return exp2(float(x)); }\n\ 
 ");
