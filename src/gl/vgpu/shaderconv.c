@@ -436,8 +436,8 @@ float vgpu_step(float x, float y) { return step(x, y); }\n\
 float vgpu_step(int x, float y) { return step(float(x), y); }\n\
 float vgpu_step(float x, int y) { return step(x, float(y)); }\n\
 float vgpu_step(int x, int y) { return step(float(x), float(y)); }\n\
-float vgpu_exp2(float x) { return exp2(x)); }\n\
-float vgpu_exp2(int x) { return exp2(float(x))); }\n\ 
+float vgpu_exp2(float x) { return exp2(x); }\n\
+float vgpu_exp2(int x) { return exp2(float(x)); }\n\ 
 ");
 
 
