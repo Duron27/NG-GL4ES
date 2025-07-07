@@ -172,7 +172,7 @@ void BuildExtensionsList() {
             strcat(glstate->extensions, "GL_EXT_texture3D ");
             strcat(glstate->extensions, "GL_EXT_texture_rg ");
             strcat(glstate->extensions, "GL_ARB_color_buffer_float ");
-            strcat(glstate->extensions, "GL_ARB_depth_buffer_float ");
+            //strcat(glstate->extensions, "GL_ARB_depth_buffer_float "); //FIXME: Important for reverse-z
             strcat(glstate->extensions, "GL_ARB_shadow ");
             
             strcat(glstate->extensions, "GL_ARB_occlusion_query ");
