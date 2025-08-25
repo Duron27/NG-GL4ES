@@ -12,3 +12,7 @@ spec/yml/gles-1.1-full.yml
 /build/
 /tests/*.png
 /src/glsl
+.vs
+out
+CMakeSettings.json
+.cache
