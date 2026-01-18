@@ -1,23 +1,15 @@
 --- !tapi-tbd
 tbd-version:     4
-targets:         [ armv7-ios, arm64-ios ]
+targets:         [ arm64-ios-simulator, arm64-ios ]
 uuids:
-  - target:          armv7-ios
+  - target:          arm64-ios-simulator
     value:           DED25068-B9AC-3912-8A10-554B715D6B7A
   - target:          arm64-ios
     value:           76481A04-BC5D-372A-98CA-935AEF5AFEE8
 flags:           [ not_app_extension_safe ]
 install-name:    '@rpath/MetalANGLE.framework/MetalANGLE'
-exports:
-  - targets:         [ armv7-ios ]
-    weak-symbols:    [ __ZTINSt3__111regex_errorE, __ZTINSt3__112bad_weak_ptrE, __ZTINSt3__117bad_function_callE, 
-                       __ZTISt11logic_error, __ZTISt12length_error, __ZTISt12out_of_range, 
-                       __ZTISt13runtime_error, __ZTISt14overflow_error, __ZTISt8bad_cast, 
-                       __ZTISt9exception, __ZTSNSt3__111regex_errorE, __ZTSNSt3__112bad_weak_ptrE, 
-                       __ZTSNSt3__117bad_function_callE, __ZTSSt11logic_error, __ZTSSt12length_error, 
-                       __ZTSSt12out_of_range, __ZTSSt13runtime_error, __ZTSSt14overflow_error, 
-                       __ZTSSt8bad_cast, __ZTSSt9exception ]
-  - targets:         [ armv7-ios, arm64-ios ]
+exports:  
+  - targets:         [ arm64-ios-simulator, arm64-ios ]
     symbols:         [ _ANGLEGetDisplayPlatform, _ANGLEResetDisplayPlatform, _EGL_BindAPI, 
                        _EGL_BindTexImage, _EGL_ChooseConfig, _EGL_ClientWaitSync, 
                        _EGL_ClientWaitSyncKHR, _EGL_CopyBuffers, _EGL_CreateContext, 
