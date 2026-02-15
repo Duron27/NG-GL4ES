@@ -271,6 +271,8 @@ void initialize_gl4es() {
 
     env(LIBGL_NODEPTHTEX, globals4es.nodepthtex, "Disable usage of Depth Textures");
 
+    env(LIBGL_SIMPLE_SHADERCONV, globals4es.simple_shaderconv, "Using simple/custom shaderconv");
+
     const char* env_drmcard = GetEnvVar("LIBGL_DRMCARD");
     if (env_drmcard) {
 #ifdef NO_GBM
