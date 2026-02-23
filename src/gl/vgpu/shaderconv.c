@@ -369,6 +369,11 @@ char* ConvertShaderConditionally(struct shader_s* shader_source) {
             source = InplaceReplaceSimple(source, &sourceLength, "const float", "float");
             // Rafael SMAA, missing defines
             source = InplaceReplaceSimple(source, &sourceLength, "#define SMAA_CORNER_ROUNDING 25", "#define SMAA_CORNER_ROUNDING 25\n    #define SMAA_REPROJECTION 0\n #define FXAA_DISCARD 0\n");
+
+            //Rafael DIVE, non-const cast
+            source = InplaceReplaceSimple(source, &sourceLength, "const vec4 swampBounds", "vec4 swampBounds");
+            source = InplaceReplaceSimple(source, &sourceLength, "const vec4 tropicalBounds", "vec4 tropicalBounds");
+
             // Wareya BadSSIL, float array
             source = InplaceReplaceSimple(source, &sourceLength, "float eles[5] = {a_v, b_v, c_v, d_v, e_v};", "float eles[5] = float[](a_v, b_v, c_v, d_v, e_v);");
             // Wazabear EdgeAA float<->bool conversion
@@ -405,6 +410,7 @@ char* ConvertShaderConditionally(struct shader_s* shader_source) {
             source = InplaceReplaceSimple(source, &sourceLength, ": #version 120", ": version 120"); // uhh? some osg stuff
 
             source = InplaceReplaceSimple(source, &sourceLength, "textureSize2D(", "vgpu_textureSize2D(");
+            source = InplaceReplaceSimple(source, &sourceLength, "shadow2D(", "vgpu_shadow2D(");
             source = InplaceReplaceSimple(source, &sourceLength, "shadow2DProj(", "vgpu_shadow2DProj(");
             source = InplaceReplaceSimple(source, &sourceLength, "#extension GL_ARB_uniform_buffer_object : require", "");
             source = InplaceReplaceSimple(source, &sourceLength, "#extension GL_EXT_gpu_shader4: require", "");
@@ -424,9 +430,11 @@ char* ConvertShaderConditionally(struct shader_s* shader_source) {
 #extension GL_EXT_texture_cube_map_array : enable\n\
 #extension GL_EXT_texture_buffer : enable\n\
 #extension GL_OES_texture_storage_multisample_2d_array : enable\n\
+#extension GL_OES_texture_3D : enable\n\
 precision highp float;\n\
 precision highp int;\n\
 precision lowp sampler2D;\n\
+precision lowp sampler3D;\n\
 precision lowp sampler2DShadow;\n\
 #define sample sample2\n\
 #define texture2D texture\n\
@@ -514,6 +522,7 @@ vec4 vgpu_step(vec4 x, vec4 y) { return step(x, y); }\n\
 float vgpu_exp2(float x) { return exp2(x); }\n\
 float vgpu_exp2(int x) { return exp2(float(x)); }\n\
 vec2 vgpu_textureSize2D(sampler2D sampler, int level) { return vec2(textureSize(sampler, level)); }\n\
+vec4 vgpu_shadow2D(sampler2DShadow sampler, vec3 uv) { return vec4(texture(sampler, uv)); }\n\
 vec4 vgpu_shadow2DProj(sampler2DShadow sampler, vec4 uv) { return vec4(textureProj(sampler, uv)); }\n\
 ");
 

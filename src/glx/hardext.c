@@ -379,6 +379,11 @@ void GetHardwareExtensions(int notest) {
     S("GL_AOS4_texture_format_RGBA8888", rgba8888, 1);
     S("GL_AOS4_texture_format_RGBA8888REV", rgba8888rev, 1);
 
+    S("GL_EXT_clip_control ", clipcontrol, 1);
+    S("GL_EXT_depth_clamp", depthclamp, 1);
+    S("GL_EXT_disjoint_timer_query", timerquery, 1);
+    S("GL_EXT_draw_buffers_indexed", drawindexed, 1);
+
     if (hardext.esversion > 1) {
         if (!globals4es.nohighp) {
             S("GL_OES_fragment_precision_high ", highp, 1);

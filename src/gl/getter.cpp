@@ -175,7 +175,7 @@ extern "C"
                    "GL_ARB_sync "
                    "GL_ARB_fragment_coord_conventions "
                    "GL_ARB_sampler_objects "
-                   "GL_ARB_texture_swizzle "
+                   //"GL_ARB_texture_swizzle "
                    "GL_ARB_compatibility "
                    "GL_ARB_draw_buffers_blend "
                    "GL_ARB_shader_image_load_store "
@@ -183,6 +183,29 @@ extern "C"
                    //"GL_ARB_separate_shader_objects "
                    //                "GL_EXT_blend_logic_op "
             );
+
+            if(hardext.clipcontrol) {
+                strcat(extensions, "GL_EXT_clip_control ");
+                strcat(extensions, "GL_ARB_clip_control ");
+            }
+
+            if(hardext.depthclamp) {
+                strcat(extensions, "GL_EXT_depth_clamp ");
+                strcat(extensions, "GL_ARB_depth_clamp ");
+            }
+
+            if(hardext.timerquery) {
+                strcat(extensions, "GL_EXT_disjoint_timer_query ");
+            }
+
+            // es3 core stuff
+            strcat(extensions, "GL_EXT_gpu_shader4 ");
+            strcat(extensions, "GL_EXT_texture3D ");
+            strcat(extensions, "GL_EXT_texture_rg ");
+            strcat(extensions, "GL_ARB_color_buffer_float ");
+        //    strcat(extensions, "GL_ARB_depth_buffer_float ");
+            strcat(extensions, "GL_ARB_shadow ");
+
             if (!globals4es.notexrect) strcat(extensions, "GL_ARB_texture_rectangle ");
             if (globals4es.vabgra) strcat(extensions, "GL_ARB_vertex_array_bgra ");
             if (globals4es.npot >= 1) strcat(extensions, "GL_APPLE_texture_2D_limited_npot ");
@@ -570,7 +593,7 @@ extern "C"
             *params = 1024;
             break;
         case GL_MAX_TEXTURE_IMAGE_UNITS:
-            *params = hardext.maxteximage * TEXTURE_IMAGE_MAGNIFICATION; // Cheating a bit
+            *params = hardext.maxteximage /** TEXTURE_IMAGE_MAGNIFICATION*/; // Cheating a bit
             break;
         case GL_MAX_MODELVIEW_STACK_DEPTH:
             *params = MAX_STACK_MODELVIEW;
@@ -1043,7 +1066,7 @@ extern "C"
         case GL_MAX_IMAGE_UNITS: {
             int es_params = 16;
             gles_glGetIntegerv(pname, &es_params);
-            *params = es_params * TEXTURE_IMAGE_MAGNIFICATION;
+            *params = es_params /** TEXTURE_IMAGE_MAGNIFICATION*/;
             break;
         }
         default:

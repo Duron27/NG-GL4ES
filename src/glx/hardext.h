@@ -78,6 +78,10 @@ typedef struct _hardext {
     int glsl310es;        // does version 300es glsl shader are supported ?
     int glsl320es;        // VGPU specific ; does version 320es glsl shader are supported ?
     int blend_func_extended; // GL_EXT_blend_func_extended
+    int clipcontrol;      // GL_EXT_clip_control
+    int depthclamp;       // GL_EXT_depth_clamp
+    int timerquery;       // GL_EXT_disjoint_timer_query
+    int drawindexed;      // GL_EXT_draw_buffers_indexed
 } hardext_t;
 
 EXPORT extern hardext_t hardext;
