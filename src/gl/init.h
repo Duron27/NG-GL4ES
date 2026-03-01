@@ -96,6 +96,7 @@ typedef struct _globals4es {
     const char* force_gles_lib;
     _Bool enableANGLE;
     int simple_shaderconv;
+    int instancing;
 } globals4es_t;
 
 extern globals4es_t globals4es;
