@@ -133,7 +133,7 @@ void APIENTRY_GL4ES gl4es_glCopyTexImage2D(GLenum target, GLint level, GLenum in
         LOAD_GLES(glBlitFramebuffer)
         GLenum format = GL_DEPTH_COMPONENT;
         GLenum type = GL_UNSIGNED_INT;
-        internal2format_type(&internalformat, &format, &type);
+        internal2format_type(internalformat, &format, &type);
         gles_glTexImage2D(target, level, (GLint)internalformat, width, height, border, format, type, NULL);
         GLint prevDrawFBO;
         gles_glGetIntegerv(GL_DRAW_FRAMEBUFFER_BINDING, &prevDrawFBO);

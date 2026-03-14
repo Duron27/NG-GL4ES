@@ -78,6 +78,13 @@ typedef struct _hardext {
     int glsl310es;        // does version 300es glsl shader are supported ?
     int glsl320es;        // VGPU specific ; does version 320es glsl shader are supported ?
     int blend_func_extended; // GL_EXT_blend_func_extended
+    int dxtCompression; // GL_EXT_texture_compression_s3tc
+    int dxt1;           // GL_EXT_texture_compression_dxt1
+    int dxt3;           // GL_EXT_texture_compression_dxt3
+    int dxt5;           // GL_EXT_texture_compression_dxt5
+    int dxt1angle;      // GL_ANGLE_texture_compression_dxt1
+    int dxt3angle;      // GL_ANGLE_texture_compression_dxt3
+    int dxt5angle;      // GL_ANGLE_texture_compression_dxt5
     int clipcontrol;      // GL_EXT_clip_control
     int depthclamp;       // GL_EXT_depth_clamp
     int timerquery;       // GL_EXT_disjoint_timer_query

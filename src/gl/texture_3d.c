@@ -83,13 +83,13 @@ void APIENTRY_GL4ES gl4es_glTexImage3D(GLenum target, GLint level, GLint interna
 #endif
     }
 
-    internal_convert(&internalformat, &type, &format);
+ //   internal_convert(&internalformat, &type, &format);
 
     if (data == NULL && (internalformat == GL_RGB16F || internalformat == GL_RGBA16F))
-        internal2format_type(&internalformat, &format, &type);
-    if (internalformat == GL_R16F) internal2format_type(&internalformat, &format, &type);
+        internal2format_type(internalformat, &format, &type);
+    if (internalformat == GL_R16F) internal2format_type(internalformat, &format, &type);
     if (data == NULL && (internalformat == GL_RED || internalformat == GL_RGB))
-        internal2format_type(&internalformat, &format, &type);
+        internal2format_type(internalformat, &format, &type);
 
     if (internalformat == GL_DEPTH32F_STENCIL8 && type == GL_FLOAT_32_UNSIGNED_INT_24_8_REV) {
         internalformat = GL_DEPTH24_STENCIL8;

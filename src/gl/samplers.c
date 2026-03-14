@@ -225,13 +225,17 @@ int samplerParameterfv(glsampler_t* sampler, GLenum pname, const GLfloat* params
     case GL_TEXTURE_BORDER_COLOR:
         memcpy(sampler->border_color, params, 4 * sizeof(GLfloat));
         break;
+    case GL_TEXTURE_SWIZZLE_R:
+    case GL_TEXTURE_SWIZZLE_G:
+    case GL_TEXTURE_SWIZZLE_B:
+    case GL_TEXTURE_SWIZZLE_A:
+        return 1;
     default:
         return 0;
     }
     noerrorShim();
     return 1;
 }
-
 int getSamplerParameterfv(glsampler_t* sampler, GLenum pname, GLfloat* params) {
     DBG(SHUT_LOGD("samplerParameterfv(%p(%d), %s, %p)\n", sampler, sampler->glname, PrintEnum(pname), params);)
     switch (pname) {

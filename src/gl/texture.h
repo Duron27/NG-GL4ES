@@ -89,7 +89,7 @@ extern "C"
 
     void tex_coord_matrix(GLfloat* tex, GLsizei len, const GLfloat* mat);
 
-    void internal2format_type(GLenum* internalformat, GLenum* format, GLenum* type);
+    void internal2format_type(GLenum internalformat, GLenum* format, GLenum* type);
     void internal_convert(GLenum* internal_format, GLenum* type, GLenum* format);
     GLenum swizzle_internalformat(GLenum* internalformat, GLenum format, GLenum type);
 
