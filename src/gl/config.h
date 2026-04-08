@@ -5,9 +5,9 @@
 extern "C" {
 #endif
 
-#define DEFAULT_NGG_DIRECTORY_PATH "/sdcard/NGG"
+#define DEFAULT_NGG_DIRECTORY_PATH "/sdcard/omw_nightly/config"
 #define CONFIG_FILE_PATH "/config.json"
-#define LOG_FILE_PATH "/latest.log"
+#define LOG_FILE_PATH "/ng-gl4es.log"
     
 void config_refresh();
 int config_get_int(char* name);

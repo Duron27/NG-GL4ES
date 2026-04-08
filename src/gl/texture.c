@@ -168,28 +168,36 @@ void internal2format_type(GLenum internalformat, GLenum *format, GLenum *type)
             *format = GL_DEPTH_STENCIL;
             *type = GL_UNSIGNED_INT_24_8;
             break;
-        case GL_RGBA16F:
-            *format = GL_RGBA;
+        case GL_R16F:
+            *format = GL_RED;
             *type = (hardext.halffloattex)?GL_HALF_FLOAT_OES:GL_UNSIGNED_BYTE;
             break;
-        case GL_RGBA32F:
-            *format = GL_RGBA;
-            *type = (hardext.floattex)?GL_FLOAT:GL_UNSIGNED_BYTE;
+        case GL_RG16F:
+            *format = GL_RG;
+            *type = (hardext.halffloattex)?GL_HALF_FLOAT_OES:GL_UNSIGNED_BYTE;
             break;
         case GL_RGB16F:
             *format = GL_RGB;
             *type = (hardext.halffloattex)?GL_HALF_FLOAT_OES:GL_UNSIGNED_BYTE;
             break;
-        case GL_RGB32F:
-            *format = GL_RGB;
-            *type = (hardext.floattex)?GL_FLOAT:GL_UNSIGNED_BYTE;
-            break;
-        case GL_R16F:
-            *format = GL_RED;
+        case GL_RGBA16F:
+            *format = GL_RGBA;
             *type = (hardext.halffloattex)?GL_HALF_FLOAT_OES:GL_UNSIGNED_BYTE;
             break;
         case GL_R32F:
             *format = GL_RED;
+            *type = (hardext.floattex)?GL_FLOAT:GL_UNSIGNED_BYTE;
+            break;
+        case GL_RG32F:
+            *format = GL_RG;
+            *type = (hardext.floattex)?GL_FLOAT:GL_UNSIGNED_BYTE;
+            break;
+        case GL_RGB32F:
+            *format = GL_RGB;
+            *type = (hardext.floattex)?GL_FLOAT:GL_UNSIGNED_BYTE;
+            break;
+        case GL_RGBA32F:
+            *format = GL_RGBA;
             *type = (hardext.floattex)?GL_FLOAT:GL_UNSIGNED_BYTE;
             break;
         default:

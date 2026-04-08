@@ -8,6 +8,7 @@
 #include "glstate.h"
 #include "loader.h"
 #include "shaderconv.h"
+#include "string_utils.h"
 #include "vgpu/shaderconv.h"
 #include "glsl/glsl_for_es.h"
 #include <ctype.h>
@@ -706,11 +707,31 @@ void APIENTRY_GL4ES gl4es_glShaderSource(GLuint shader, GLsizei count, const GLc
     if (gles_glShaderSource) {
         // adapt shader if needed (i.e. not an es2 context and shader is not #version 100)
         int isFPEShader = (strstr(glshader->source, fpeshader_signature) != NULL) ? 1 : 0;
+        bool isLegacy = IsLegacyGLSLVersion(glshader->source);
+
+        //Hack for Zesterer clouds as i like it and spirv-cross break it, but its so cool it dont need spirv at all
+        bool isForcedSimpleShaderConv = FindString(glshader->source, "#if defined(GL4ES) || __VERSION__ < 130") ? true : false;
+
         if (is_direct_shader(glshader->source)) {
             glshader->converted = strdup(glshader->source);
-        } else if (globals4es.simple_shaderconv && !isFPEShader) {
-            glshader->converted = strdup(ConvertShaderConditionally(glshader));
-            glshader->is_converted_essl_320 = 0;
+        } else if (!isFPEShader && isLegacy) {
+            if (globals4es.simple_shaderconv || isForcedSimpleShaderConv) {
+                glshader->converted = strdup(SimpleShaderConv(glshader));
+                glshader->is_converted_essl_320 = 0;
+            }
+            else {
+                glshader->converted = strdup(LegacyTo3XX(glshader));
+                int glsl_version = getGLSLVersion(glshader->converted);
+
+                int returnCode = 0; // TODO: handle returnCode
+                glshader->converted = strdup(GLSLtoGLSLES_c(glshader->converted, glshader->type, globals4es.esversion, glsl_version, &returnCode));
+                glshader->converted = process_uniform_declarations(glshader->converted, glshader->uniforms_declarations, &glshader->uniforms_declarations_count);
+                glshader->is_converted_essl_320 = 0;
+
+                if (returnCode != 0) {
+                    SHUT_LOGD("\n#version 120 to ES failed Shader source: return code %d\n%s", returnCode, glshader->converted)
+                }
+            }
         } else {
             int glsl_version = getGLSLVersion(glshader->source);
             DBG(SHUT_LOGD("[INFO] [Shader] Shader source: "))

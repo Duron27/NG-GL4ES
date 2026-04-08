@@ -46,4 +46,9 @@ char* ProcessSwitchCases(char* source, int* length);
 
 char* GetOperandFromOperator(char* source, int operatorIndex, int rightOperand, int * limit);
 
+
+char* LegacyTo3XX(struct shader_s* shader_source);
+GLboolean IsLegacyGLSLVersion(const char* source);
+char* SimpleShaderConv(struct shader_s* shader_source);
+
 #endif //UNTITLED_SHADERCONV_H

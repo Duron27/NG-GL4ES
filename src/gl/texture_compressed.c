@@ -219,8 +219,6 @@ GLvoid *compressDXTc(GLsizei width, GLsizei height, GLenum format, const GLvoid 
 void APIENTRY_GL4ES gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLenum internalformat, GLsizei width,
                                                  GLsizei height, GLint border, GLsizei imageSize, const GLvoid* data) {
 
-    if(!data) return;
-    GLboolean generateMipmaps = (imageSize < 0) ? true : false;
     if (imageSize < 0) imageSize *= -1;
 
     const GLuint itarget = what_target(target);
@@ -365,7 +363,7 @@ void APIENTRY_GL4ES gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLe
         bound->compressed = 1;
         bound->wanted_internal = bound->internalformat = internalformat;
         bound->valid = 1;
-        if (generateMipmaps && globals4es.dxtmipmap) {
+        if (level/*generateMipmaps && globals4es.dxtmipmap*/) {
             // not automipmap yet? then set it...
             bound->mipmap_need = 1;
             // and upload higher level here...
@@ -391,8 +389,8 @@ void APIENTRY_GL4ES gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLe
         if (oldalign != 1) gl4es_glPixelStorei(GL_UNPACK_ALIGNMENT, oldalign);
         if (half != pixels) free(half);
         if (pixels != datab) free(pixels);
-    }  else if (isDXTc(internalformat) && globals4es.dxt != 3) {
-        //SHUT_LOGD("level %i width %i height %i max level %i\n", level, width, height, bound->max_level);
+    } else if (isDXTc(internalformat) && globals4es.dxt != 3) {
+        //SHUT_LOGD("level %i width %i height %i base level %i max level %i\n", level, width, height, bound->base_level, bound->max_level);
         LOAD_GLES(glCompressedTexImage2D);
         bound->alpha = (internalformat == GL_COMPRESSED_RGB_S3TC_DXT1_EXT) ? 0 : 1;
         bound->format = internalformat;
@@ -408,7 +406,11 @@ void APIENTRY_GL4ES gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLe
         if (glstate->fpe_state && glstate->fpe_bound_changed < glstate->texture.active+1)
             glstate->fpe_bound_changed = glstate->texture.active+1;
         gles_glCompressedTexImage2D(rtarget, level, internalformat, width, height, border, imageSize, datab);
-        if (generateMipmaps && globals4es.dxtmipmap) {
+
+        LOAD_GLES(glTexParameteri);
+        gles_glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, level);
+
+        if (level == bound->max_level && globals4es.dxtmipmap) {
             // not automipmap yet? then set it...
             bound->mipmap_need = 1;
             int simpleAlpha = 0;
@@ -446,6 +448,7 @@ void APIENTRY_GL4ES gl4es_glCompressedTexImage2D(GLenum target, GLint level, GLe
                 //SHUT_LOGD("generating compressed mip map\nlevel %i width %i height %i\n", leveln, nww, nhh);
                 GLuint mipmapSize = computeImageSize(nww, nhh, 1, internalformat);
                 GLvoid *compressedpixels = compressDXTc(nww, nhh, internalformat, out);
+                gles_glTexParameteri(target, GL_TEXTURE_MAX_LEVEL, leveln);
                 gles_glCompressedTexImage2D(rtarget, leveln, internalformat, nww, nhh, border, mipmapSize, compressedpixels);
                 if(out!=ndata)
                     free(out);
@@ -500,7 +503,7 @@ void APIENTRY_GL4ES gl4es_glCompressedTexSubImage2D(GLenum target, GLint level, 
     int complexAlpha = 0;
     int transparent0 =
         (format == GL_COMPRESSED_RGBA_S3TC_DXT1_EXT || format == GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT) ? 1 : 0;
-    if (isDXTc(format)) {
+    if ((!isFormatSupported(format) && isDXTc(format)) || (globals4es.dxt == 1 && isDXTc(format))) {
         if (level) {
             noerrorShim();
             return;
@@ -612,6 +615,8 @@ void APIENTRY_GL4ES gl4es_glCompressedTexImage1D(GLenum target, GLint level, GLe
 void APIENTRY_GL4ES gl4es_glCompressedTexImage3D(GLenum target, GLint level, GLenum internalformat, GLsizei width,
                                                  GLsizei height, GLsizei depth, GLint border, GLsizei imageSize,
                                                  const GLvoid* data) {
+
+SHUT_LOGE("gl4es_glCompressedTexImage3D")
 
     gl4es_glCompressedTexImage2D(target, level, internalformat, width, height, border, imageSize, data);
 }

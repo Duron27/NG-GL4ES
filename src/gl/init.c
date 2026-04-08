@@ -161,19 +161,19 @@ void initialize_gl4es() {
 
     switch(ReturnEnvVarInt("LIBGL_DXT")) {
     	case 1:
-        SHUT_LOGD("forcing software DXT decompression\n");
+        SHUT_LOGD("forcing software DXT decompression");
         globals4es.dxt = 1;
     	  break;
     	case 2:
-        SHUT_LOGD("not exposing DXT support\n");
+        SHUT_LOGD("not exposing DXT support");
         globals4es.dxt = 2;
     	  break;
     	case 3:
-        SHUT_LOGD("handling DXT as is\n");
+        SHUT_LOGD("handling DXT as is");
         globals4es.dxt = 3;
     	  break;
     	default:
-        SHUT_LOGD("using hardware DXT if supported + software fallback\n");
+        SHUT_LOGD("using hardware DXT if supported + software fallback");
         globals4es.dxt = 0;
     	  break;
     }
