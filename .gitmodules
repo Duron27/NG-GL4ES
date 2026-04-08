@@ -7,3 +7,6 @@
 [submodule "3rdparty/SPIRV-Tools"]
 	path = 3rdparty/SPIRV-Tools
 	url = https://github.com/KhronosGroup/SPIRV-Tools
+[submodule "3rdparty/SPIRV-headers"]
+	path = 3rdparty/SPIRV-headers
+	url = https://github.com/KhronosGroup/SPIRV-headers
