@@ -38,6 +38,7 @@ set(SPIRV_CROSS_ENABLE_UTIL    OFF  CACHE BOOL "Disable util" FORCE)
 
 add_subdirectory(3rdparty/glslang)
 add_subdirectory(3rdparty/SPIRV-Cross)
+add_subdirectory(3rdparty/SPIRV-Tools)
 
 enable_language(CXX)
 
@@ -154,6 +155,8 @@ add_library(ng_gl4es SHARED ${SRC_FILES})
 target_link_libraries(${CMAKE_PROJECT_NAME} PRIVATE
     glslang::glslang
     spirv-cross-c
+    SPIRV-Tools
+    SPIRV-Tools-opt
 )
 
 if(MACOS)
