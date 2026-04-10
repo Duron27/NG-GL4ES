@@ -99,6 +99,7 @@ typedef struct _globals4es {
     int instancing;
     int dxt;
     int dxtmipmap;
+    int spirv_opt;
 } globals4es_t;
 
 extern globals4es_t globals4es;

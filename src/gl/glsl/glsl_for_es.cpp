@@ -15,6 +15,11 @@
 #include <sstream>
 #include "../../../version.h"
 
+#ifdef INCLUDE_SPIRV_TOOLS
+#include <spirv-tools/libspirv.hpp>
+#include <spirv-tools/optimizer.hpp>
+#endif
+
 extern "C"
 {
 #include <stdbool.h>
@@ -874,8 +879,25 @@ std::string GLSLtoGLSLES_2(const char* glsl_code, GLenum glsl_type, unsigned int
         DBG(SHUT_LOGD("Error compiling GLSL to SPIR-V: %d", errc))
         return "";
     }
+
     errc = 0;
-    std::string essl = spirv_to_essl(spirv_code, essl_version, errc);
+    std::string essl;
+#ifdef INCLUDE_SPIRV_TOOLS
+    if (globals4es.spirv_opt) {
+        SHUT_LOGD("SPIRV-opt running")
+        spvtools::Optimizer optimizer(SPV_ENV_UNIVERSAL_1_5);
+        optimizer.RegisterPerformancePasses((globals4es.spirv_opt == 1) ? true : false);
+        std::vector<unsigned int> optimized_spirv;
+        optimizer.Run(spirv_code.data(), spirv_code.size(), &optimized_spirv);
+        essl = spirv_to_essl(optimized_spirv, essl_version, errc);
+    }
+    else {
+        essl = spirv_to_essl(spirv_code, essl_version, errc);
+    }
+#else
+    essl = spirv_to_essl(spirv_code, essl_version, errc);
+#endif
+
     if (errc != 0) {
         return_code = -2;
         return "";

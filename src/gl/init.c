@@ -179,6 +179,7 @@ void initialize_gl4es() {
     }
 
     globals4es.dxtmipmap = ReturnEnvVarInt("LIBGL_DXTMIPMAP");
+    globals4es.spirv_opt = ReturnEnvVarInt("LIBGL_SPIRV-OPT");
 
     env(LIBGL_INSTANCING, globals4es.instancing, "Using HW glDrawElementsInstanced");
 
