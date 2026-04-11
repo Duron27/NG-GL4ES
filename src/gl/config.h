@@ -5,7 +5,7 @@
 extern "C" {
 #endif
 
-#define DEFAULT_NGG_DIRECTORY_PATH "/sdcard/omw_nightly/config"
+#define DEFAULT_NGG_DIRECTORY_PATH "/sdcard/Alpha3/config"
 #define CONFIG_FILE_PATH "/config.json"
 #define LOG_FILE_PATH "/ng-gl4es.log"
     
