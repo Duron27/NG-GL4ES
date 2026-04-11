@@ -3,12 +3,6 @@ cmake_minimum_required(VERSION 3.10)
 project(ng_gl4es)
 
 #if (NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
-    include(CheckIPOSupported)
-    check_ipo_supported(RESULT LTOSupported OUTPUT LTOError)
-    if (LTOSupported)
-        set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
-    endif()
-
     if (CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang|AppleClang")
         add_compile_options(-g0 -O3 -ffunction-sections -fdata-sections)
         add_link_options(-Wl,--gc-sections)
